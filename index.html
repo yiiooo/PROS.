@@ -701,7 +701,7 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
 </div>
 
 <div class="toast" id="toast" role="status"></div>
-<div class="sheet" id="al"><div role="dialog" aria-label="Admin"><h3>Admin</h3><p>Enter your ID and password.</p><label class="fl" for="alid">ID</label><input class="in2" id="alid" autocomplete="off" autocapitalize="off" spellcheck="false"><label class="fl" for="alpw">Password</label><input class="in2" id="alpw" type="password" autocomplete="off"><div class="lger" id="aler"></div><button class="pill" id="alok" style="width:100%;margin-top:12px;padding:14px">Enter</button><button class="x" data-close>Cancel</button></div></div>
+<div class="sheet" id="al"><div role="dialog" aria-label="Admin"><h3>Admin</h3><p>Sign in with your Supabase admin email and password.</p><label class="fl" for="alid">Admin email</label><input class="in2" id="alid" type="email" autocomplete="username" autocapitalize="off" spellcheck="false"><label class="fl" for="alpw">Password</label><input class="in2" id="alpw" type="password" autocomplete="off"><div class="lger" id="aler"></div><button class="pill" id="alok" style="width:100%;margin-top:12px;padding:14px">Enter</button><button class="x" data-close>Cancel</button></div></div>
 <div class="sheet" id="sheet"><div role="dialog" aria-label="Buy">
  <h3 id="sn">Product</h3>
  <p id="buy-price-note">The price shown is $30 and is only an estimate. Each marketplace may change its price at any time.</p>
@@ -1433,45 +1433,60 @@ function exportData(){
  setTimeout(function(){URL.revokeObjectURL(url); a.remove();},1000);
 }
 $("adexp").onclick=exportData;
-function saveChangesToStorage(){
+async function saveChangesToStorage(){
+ if(!ADMIN || !window.prosSupabase){msg("Admin Supabase belum terhubung. Silakan login ulang.");return;}
+ var sb=window.prosSupabase;
  try{
-  if(W.collections){
-   W.collections.forEach(function(col){
-    if(col.productIdsStr !== undefined){
-     col.productIds = col.productIdsStr.split(",").map(function(x){return parseInt(x.trim(), 10)}).filter(function(n){return !isNaN(n)});
-     delete col.productIdsStr;
-    }
-   });
-  }
-  if(!W.heroBanner)W.heroBanner={src:""};
-  if(!W.heroIcons)W.heroIcons={sm:"",pic:"",vid:""};
-  if(!W.catImages)W.catImages={};
-  if(!W.aboutPhotos)W.aboutPhotos={};
-  localStorage.setItem("pros_db",JSON.stringify(W));
-  DB=JSON.parse(JSON.stringify(W)); P=DB.products;
-  renderHeroBanner(); renderBanner(); renderGal(); renderHome(); renderCat(); renderCart(); renderCollections(); renderMenuSoc(); renderAboutPhotos();
-  msg("Saved successfully!");
- }catch(e){
-  msg("Storage full! The file is too large, try using fewer photos.");
- }
+  if(W.collections){W.collections.forEach(function(col){if(col.productIdsStr!==undefined){col.productIds=col.productIdsStr.split(",").map(function(x){return parseInt(x.trim(),10)}).filter(function(n){return !isNaN(n)});delete col.productIdsStr;}});}
+  if(!W.heroBanner)W.heroBanner={src:""}; if(!W.heroIcons)W.heroIcons={sm:"",pic:"",vid:""}; if(!W.catImages)W.catImages={}; if(!W.aboutPhotos)W.aboutPhotos={};
+  var products=(W.products||[]).map(function(p){return {id:p.id,name:p.name||"",cat:p.cat||"T-Shirt",sty:p.sty||"",tone:p.tone||"",price:Number(p.price||0),imgs:p.imgs||[],vids:p.vids||[],buy_links:p.buyLinks||[],is_new:!!p.isNew,added:Number(p.added||0),best:!!p.best,highlight:p.hl||"",size_guide:p.size||"",specs:p.spec||"",description:p.desc||""};});
+  var collections=(W.collections||[]).map(function(c){return {id:c.id,name:c.name||"",description:c.desc||"",src:c.src||"",product_ids:c.productIds||[]};});
+  var pr=await sb.from("products").upsert(products,{onConflict:"id"}); if(pr.error)throw pr.error;
+  var cr=await sb.from("collections").upsert(collections,{onConflict:"id"}); if(cr.error)throw cr.error;
+  var settingKeys=["banner","heroBanner","catImages","social","gv","gp","ev","aboutPhotos","meta"];
+  var settings=settingKeys.filter(function(k){return Object.prototype.hasOwnProperty.call(W,k);}).map(function(k){return {key:k,value:W[k]};});
+  if(settings.length){var sr=await sb.from("site_settings").upsert(settings,{onConflict:"key"});if(sr.error)throw sr.error;}
+  // Remove rows deleted in the admin panel, but only after successful upserts.
+  var keepP=products.map(function(p){return p.id;}); var keepC=collections.map(function(c){return c.id;});
+  var oldP=await sb.from("products").select("id");if(oldP.error)throw oldP.error;
+  var delP=(oldP.data||[]).filter(function(r){return keepP.indexOf(r.id)===-1;}).map(function(r){return r.id;});
+  if(delP.length){var dp=await sb.from("products").delete().in("id",delP);if(dp.error)throw dp.error;}
+  var oldC=await sb.from("collections").select("id");if(oldC.error)throw oldC.error;
+  var delC=(oldC.data||[]).filter(function(r){return keepC.indexOf(r.id)===-1;}).map(function(r){return r.id;});
+  if(delC.length){var dc=await sb.from("collections").delete().in("id",delC);if(dc.error)throw dc.error;}
+  DB=JSON.parse(JSON.stringify(W));P=DB.products;
+  renderHeroBanner();renderBanner();renderGal();renderHome();renderCat();renderCart();renderCollections();renderMenuSoc();renderAboutPhotos();
+  msg("Berhasil disimpan ke Supabase.");
+ }catch(e){console.error("PROS Supabase save failed",e);msg("Gagal menyimpan ke Supabase: "+(e.message||"periksa login dan izin admin"));}
 }
 
-var ADMIN=false,tmo=0,fails=0,lockUntil=0,AH="847db60519d7ca312232ba9487df36e1c07725fb6eb29312bd0f4c7ea6587847";try{ADMIN=sessionStorage.getItem("pros_adm")==="1"}catch(e){}
+var ADMIN=false,tmo=0,fails=0,lockUntil=0;
 function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tmo);tmo=setTimeout(function(){t.classList.remove("on")},6000)}
-async function sha(t){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}
 function openAd(){if(!W)W=JSON.parse(JSON.stringify(DB));if(!W.priceUI)W.priceUI="1";W.gmeta=W.gmeta||{};W.gmeta.gv=W.gmeta.gv||[];W.gmeta.gp=W.gmeta.gp||[];if(!W.menuSoc)W.menuSoc=msDefault();if(!W.aboutPhotos)W.aboutPhotos={};if(!W.heroIcons)W.heroIcons={sm:"",pic:"",vid:""};if(!W.heroBanner)W.heroBanner={src:""};if(!W.catImages)W.catImages={"Accessories":"","T-Shirt":"","Hoodie":"","Pants":"","All":""};if(!W.collections)W.collections=[];
  W.collections.forEach(function(col){col.productIdsStr = col.productIds ? col.productIds.join(",") : "";});
  A={t:"p",pi:-1,del:-1,q:"",pc:"All",nf:0};msg("");renderAd();$("ad").classList.add("on");document.body.style.overflow="hidden"}
 function openAL(){if(ADMIN){openAd();return}$("alid").value="";$("alpw").value="";$("aler").textContent="";$("al").classList.add("on")}
 
 $("alok").addEventListener("click",async function(){
- if(Date.now()<lockUntil){$("aler").textContent="Too many attempts. Please wait a moment.";return}
- var h="";try{h=await sha("pros.v1:"+$("alid").value.trim()+"\n"+$("alpw").value)}catch(e){$("aler").textContent="Failed to process login.";return}
- if(h===AH){fails=0;ADMIN=true;try{sessionStorage.setItem("pros_adm","1")}catch(e){}$("al").classList.remove("on");$("alpw").value="";openAd()}
- else{fails++;$("aler").textContent="Wrong ID or password.";if(fails>=5){lockUntil=Date.now()+60000;fails=0}}
+ var email=$("alid").value.trim(),password=$("alpw").value;
+ if(!window.prosSupabase){$("aler").textContent="Supabase belum siap. Muat ulang halaman.";return;}
+ if(!email||!password){$("aler").textContent="Masukkan email dan password admin.";return;}
+ var btn=$("alok");btn.disabled=true;btn.textContent="Checking...";
+ try{
+  var auth=await window.prosSupabase.auth.signInWithPassword({email:email,password:password});
+  if(auth.error)throw auth.error;
+  var user=auth.data.user;
+  var check=await window.prosSupabase.from("admins").select("user_id").eq("user_id",user.id).maybeSingle();
+  if(check.error)throw check.error;
+  if(!check.data){await window.prosSupabase.auth.signOut();throw new Error("Akun ini belum didaftarkan sebagai admin di tabel admins.");}
+  fails=0;ADMIN=true;$("al").classList.remove("on");$("alpw").value="";
+  try{W=JSON.parse(JSON.stringify(DB));}catch(e){}
+  openAd();
+ }catch(e){fails++;$("aler").textContent=(e.message||"Login gagal.");if(fails>=5){$("aler").textContent+=" Pastikan email, password, dan akses admin benar.";fails=0;}}
+ finally{btn.disabled=false;btn.textContent="Enter";}
 });
 
-$("adlo").addEventListener("click",function(){ADMIN=false;W=null;try{sessionStorage.removeItem("pros_adm")}catch(e){}$("ad").classList.remove("on");document.body.style.overflow=""});
+$("adlo").addEventListener("click",async function(){ADMIN=false;W=null;if(window.prosSupabase){await window.prosSupabase.auth.signOut();}$("ad").classList.remove("on");document.body.style.overflow=""});
 $("adsave").addEventListener("click",function(){saveChangesToStorage();});
 
 (function(){
@@ -1552,4 +1567,90 @@ document.addEventListener("click", function(e){
  inp.value="";
  renderAd();
 });
-</script></body></html>
+</script>
+<!-- PROS Supabase public catalogue integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  "use strict";
+  var SUPABASE_URL = "https://omhacqihlssvgleupyxq.supabase.co";
+  var SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5B0jCUOUeK_MeeJonGa_8w_1GKBXr4F";
+  if (!window.supabase || !window.supabase.createClient) {
+    console.warn("PROS: Supabase client could not load; using local fallback.");
+    return;
+  }
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  window.prosSupabase = sb;
+  function mapProduct(row) {
+    return {
+      id: row.id, name: row.name || "", cat: row.cat || "T-Shirt",
+      sty: row.sty || "", tone: row.tone || "", price: Number(row.price || 0),
+      imgs: Array.isArray(row.imgs) ? row.imgs : [],
+      vids: Array.isArray(row.vids) ? row.vids : [],
+      buyLinks: Array.isArray(row.buy_links) ? row.buy_links : [],
+      isNew: !!row.is_new, added: Number(row.added || 0), best: !!row.best,
+      hl: row.highlight || "", size: row.size_guide || "", spec: row.specs || "",
+      desc: row.description || ""
+    };
+  }
+  async function loadProsFromSupabase() {
+    try {
+      var results = await Promise.all([
+        sb.from("products").select("*").order("id", {ascending:true}),
+        sb.from("collections").select("*").order("id", {ascending:true}),
+        sb.from("site_settings").select("key,value")
+      ]);
+      if (results[0].error) throw results[0].error;
+      if (results[1].error) throw results[1].error;
+      if (results[2].error) throw results[2].error;
+      var products = results[0].data || [];
+      if (!products.length) throw new Error("Supabase returned no products");
+      var settings = {};
+      (results[2].data || []).forEach(function (row) { settings[row.key] = row.value; });
+      var next = {
+        products: products.map(mapProduct),
+        collections: (results[1].data || []).map(function (c) {
+          return {id:c.id, name:c.name || "", desc:c.description || "", src:c.src || "",
+            productIds:Array.isArray(c.product_ids) ? c.product_ids : []};
+        }),
+        banner: settings.banner || (DB && DB.banner) || {src:""},
+        heroBanner: settings.heroBanner || (DB && DB.heroBanner) || {src:""},
+        catImages: settings.catImages || (DB && DB.catImages) || {},
+        social: settings.social || (DB && DB.social) || {links:[]},
+        gv: settings.gv || (DB && DB.gv) || [],
+        gp: settings.gp || (DB && DB.gp) || [],
+        ev: settings.ev || (DB && DB.ev) || [],
+        aboutPhotos: settings.aboutPhotos || (DB && DB.aboutPhotos) || {},
+        meta: settings.meta || (DB && DB.meta) || {}
+      };
+      if (settings.meta && typeof settings.meta === "object") {
+        Object.keys(settings.meta).forEach(function (key) {
+          if (!Object.prototype.hasOwnProperty.call(next, key)) next[key] = settings.meta[key];
+        });
+      }
+      DB = next;
+      P = DB.products;
+      try { if (typeof W !== "undefined" && W) W = JSON.parse(JSON.stringify(DB)); } catch (_) {}
+      if (typeof renderHeroBanner === "function") renderHeroBanner();
+      if (typeof renderBanner === "function") renderBanner();
+      if (typeof renderGal === "function") renderGal();
+      if (typeof renderHome === "function") renderHome();
+      if (typeof renderCat === "function") renderCat();
+      if (typeof renderCart === "function") renderCart();
+      if (typeof renderCollections === "function") renderCollections();
+      if (typeof renderMenuSoc === "function") renderMenuSoc();
+      if (typeof renderAboutPhotos === "function") renderAboutPhotos();
+      console.info("PROS: catalogue loaded from Supabase.");
+    } catch (err) {
+      console.warn("PROS: Could not load Supabase catalogue; local fallback remains active.", err);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadProsFromSupabase);
+  } else {
+    loadProsFromSupabase();
+  }
+})();
+</script>
+
+</body></html>
