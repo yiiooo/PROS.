@@ -178,7 +178,7 @@ h2{font-size:22px;font-weight:700;letter-spacing:-.2px;margin:22px 0 10px}
 
 /* detail */
 .dh{display:flex;align-items:center;gap:14px;margin:8px 0}
-.category-head{margin:8px 0 14px}.category-head h2{margin:0;padding:0}
+.category-head{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:8px 0 14px}.category-head h2{margin:0;padding:0}.page-back{display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border:1px solid var(--ln);border-radius:999px;background:#211F1D;color:#F0EAE0;font:600 14px inherit;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.18)}.page-back span{font-size:20px;line-height:1}
 .back{width:44px;height:44px;border-radius:6px;background:#E4DDD0;font-size:24px;color:var(--mu)}
 .pd{display:grid;gap:18px;min-width:0}.pd>div,.pd .info,.pd details,.pd .detail-copy{min-width:0;max-width:100%;box-sizing:border-box}
 .gal2{display:grid;grid-template-columns:minmax(0,1fr) 76px;gap:10px}
@@ -707,7 +707,7 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
  <h2>Best Sellers</h2><div class="grid" id="best"></div>
 </section>
 <section class="view" id="category">
- <div class="dh category-head"><button class="back" type="button" data-back aria-label="Kembali ke halaman sebelumnya">‹</button><h2>Category</h2></div>
+ <div class="category-head"><button class="page-back" type="button" data-back><span aria-hidden="true">←</span> Kembali</button><h2>Category</h2></div>
  <div id="azbar"></div>
  <div class="chips" id="catchips"></div>
  <div class="chips" id="stychips"></div>
@@ -1063,7 +1063,7 @@ function productColorHtml(p){var items=productColorSet(p);if(!items.length)retur
 function open_(i){st.pid=i;st.img=0;if(cur!="detail")st.prev=cur;var p=gp(i);if(!p)return;
  // Tampilkan semua produk lain of kategori yang sama; halaman detail dapat di-scroll sampai CTA kategori.
  var rel=P.filter(function(x){return x.cat==p.cat&&x.id!=i}),vs=Array.isArray(p.vids)?p.vids:[],N=cnt(p),pPrice=p.price!==undefined?p.price:30;
- $("detail").innerHTML='<div class="dh"><button class="back" data-back aria-label="Back">‹</button></div>'+
+ $("detail").innerHTML=''+
  '<div class="pd"><div><div class="gal2"><div class="mi" id="mi" data-zoom style="cursor:zoom-in;background:'+pic(p,0)+'"><span>'+ltr(p)+'</span><div class="dots">'+Array.from({length:N},function(_,k){return '<i'+(k?'':' class="on"')+'></i>'}).join("")+'</div><button class="zm" data-zoom aria-label="Zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg></button></div>'+
  '<div class="tb"><div class="tbi">'+Array.from({length:N},function(_,n){return '<button data-th="'+n+'" class="'+(n?'':'on')+'" style="background:'+pic(p,n)+'">'+ltr(p)+'</button>'}).join("")+'</div></div></div></div>'+
  '<div class="info"><div class="pt notranslate product-name-anton" translate="no">'+esc(p.name)+(p.tone?', '+esc(p.tone):'')+'</div>'+(priceOn(p)?priceHtml(p,"font-size:18px;margin-bottom:2px")+'<div class="price-note">(the price shown is $'+pPrice+' and is only an estimate; each marketplace may change its price at any time)</div>':'')+''+productColorHtml(p)+'<div class="pdl">Product Detail</div>'+
