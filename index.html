@@ -1486,8 +1486,6 @@ function renderAd(){
      fld("Price ($)",b+"price")+
      '<label class="cb"><input type="checkbox" data-c="'+b+'showPrice"'+(p.showPrice!==false?' checked':'')+'> Show this product’s price</label>'+
      '<label class="fl">Price display</label><select data-f="'+b+'priceUI"><option value="1"'+(p.priceUI!="2"?' selected':'')+'>UI 1 - Simple text</option><option value="2"'+(p.priceUI=="2"?' selected':'')+'>UI 2 - Rounded label</option></select>'+
-     '<label class="fl">Category</label><select data-f="'+b+'cat" data-re>'+CN.map(function(c){return '<option'+(c==p.cat?' selected':'')+'>'+c+'</option>'}).join("")+'</select>'+
-     '<label class="fl">Style</label><select data-f="'+b+'sty">'+CATS[p.cat].map(function(c){return '<option'+(c==p.sty?' selected':'')+'>'+c+'</option>'}).join("")+'</select>'+
      colorVariantAdminHtml(p,A.pi)+
      buyLinksHtml+
      chk("New release",b+"isNew")+
