@@ -2058,6 +2058,7 @@ document.addEventListener("click", function(e){
       if (typeof renderCollections === "function") renderCollections();
       if (typeof renderMenuSoc === "function") renderMenuSoc();
       if (typeof renderAboutPhotos === "function") renderAboutPhotos();
+      if (window.prosTaxonomyRefresh) window.prosTaxonomyRefresh();
       console.info("PROS: catalogue loaded from Supabase.");
     } catch (err) {
       console.warn("PROS: Could not load Supabase catalogue; local fallback remains active.", err);
