@@ -708,10 +708,9 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
 </section>
 <section class="view" id="category">
  <div class="category-head"><div class="category-kicker" style="display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:48px;width:100%;"><button type="button" data-back aria-label="Kembali ke halaman sebelumnya" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px;width:46px;height:46px;align-items:center;justify-content:center;margin:0;padding:0;border:1px solid #77716a;border-radius:12px;background:#24211f;color:#F0EAE0;font:600 32px/1 Inter,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;position:relative;z-index:5;">←</button><span style="display:block;">SHOP PROS</span></div><h2>ALL CATEGORIES</h2></div>
- <div id="azbar"></div>
- <div class="chips" id="catchips"></div>
- <div class="chips" id="stychips"></div>
- <div class="chips" id="pricechips"></div>
+ <p class="mu" style="margin:10px 0 24px;font-size:16px;line-height:1.45">Choose a category to start exploring. Use filters when you need more specific results.</p>
+ <div id="categoryTiles" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 28px"></div>
+ <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--ln);padding-top:18px;margin:0 0 18px"><h3 id="categoryProductCount" style="margin:0;font-size:20px"></h3><button type="button" class="chip" data-category-reset style="padding:12px 16px">All Products</button></div>
  <div class="grid" id="catgrid"></div>
 </section>
 <section class="view" id="collection">
@@ -1112,27 +1111,37 @@ function renderHome(){
  var homeCats=$("homecats");if(homeCats)homeCats.innerHTML="";
  var allBtn=$("allCatBtn");if(allBtn){allBtn.style.background="";allBtn.innerHTML="<span>Explore All Categories</span><span>↗</span>";allBtn.dataset.cat="All";}
  $("best").innerHTML=P.filter(function(p){return p.best}).map(function(p){return card(p, P.indexOf(p))}).join("")||'<div class="empty" style="grid-column:1/-1">No best sellers yet.</div>'}
-var LEFT=["All","New Release"].concat(CN),AZL="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-var PRICE_RANGES=[{label:"All Price",min:0,max:9999},{label:"$20 - $40",min:20,max:40},{label:"$41 - $70",min:41,max:70},{label:"$71 - $100+",min:71,max:9999}];
-function chip(t){return '<button class="chip'+(t==st.cat?' on':'')+'" data-cat="'+t+'">'+t+'</button>'}
-function priceChip(pr){var lbl=pr.label,on=(st.priceRange===lbl||(!st.priceRange&&lbl=="All Price"));return '<button class="chip'+(on?' on':'')+'" data-pr="'+lbl+'">'+lbl+'</button>'}
-function baseList(){var c=st.cat, list=P;if(c=="New Release")list=P.filter(function(p){return p.isNew}).sort(function(a,b){return (b.added||0)-(a.added||0)});else if(c!="All")list=P.filter(function(p){return p.cat==c&&(!st.sty||p.sty==st.sty)});
-if(st.priceRange && st.priceRange!="All Price"){
- var prObj=PRICE_RANGES.find(function(x){return x.label==st.priceRange});
- if(prObj){list=list.filter(function(p){var pr=p.price!==undefined?p.price:30;return pr>=prObj.min&&pr<=prObj.max});}
+var CATEGORY_ICONS={
+ "All Products":'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
+ "T-Shirts":'<path d="M8 5 4 7 2 12l4 2 2-3v9h12v-9l2 3 4-2-2-5-4-2-3 2h-4z"/>',
+ "Hoodies & Sweaters":'<path d="M8 6 5 8 2 14l4 3 2-3v7h12v-7l2 3 4-3-3-6-4-2c0 3-7 3-7 0z"/><path d="M9 6c0-3 6-3 6 0"/>',
+ "Jackets":'<path d="M8 4 4 6 2 13l4 2 2-3v9h12v-9l2 3 2-2-2-7-4-2-3 2h-4z"/><path d="M12 6v15"/>',
+ "Shirts":'<path d="m8 4 4 2 4-2 5 3-2 5-3-1v10H8V11l-3 1-2-5z"/><path d="m8 4 4 5 4-5"/>',
+ "Pants":'<path d="M6 3h12l1 18h-6l-1-9-1 9H5z"/>',
+ "Shorts":'<path d="M5 4h14l1 15h-7l-1-7-1 7H4z"/>',
+ "Shoes":'<path d="M3 15c4 0 6-2 8-6l3 4 6 2 2 2v3H3z"/>',
+ "Headwear":'<path d="M4 14a8 8 0 0 1 16 0v2H4z"/><path d="M2 16h20v3H2z"/>',
+ "Bags":'<rect x="4" y="8" width="16" height="13" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/>',
+ "Accessories":'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',
+ "Sets":'<path d="M5 4h14v7H5zM5 13h14v7H5z"/>',
+ "Skirts & Dresses":'<path d="M9 4h6l1 5 5 12H3L8 9z"/>'
+};
+function renderCat(){
+ var c=st.cat,base=baseList(),tiles=[];
+ function tile(label,count,active,catValue){
+  var svg=CATEGORY_ICONS[label]||CATEGORY_ICONS["Accessories"];
+  return '<button type="button" data-cat="'+esc(catValue)+'" aria-pressed="'+(active?'true':'false')+'" style="min-width:0;min-height:112px;padding:16px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;border:1px solid '+(active?'var(--cream)':'var(--ln)')+';border-radius:18px;background:'+(active?'transparent':'var(--card)')+';color:var(--cream);font:inherit;text-align:center;cursor:pointer"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+svg+'</svg><b style="font-size:14px;line-height:1.2">'+label+'</b><small style="color:var(--mu);font-size:12px">'+count+' products</small></button>';
+ }
+ tiles.push(tile("All Products",P.length,c==="All","All"));
+ CN.forEach(function(name){
+  var count=P.filter(function(p){return p.cat===name}).length;
+  if(count||name==="T-Shirts"||name==="Hoodies & Sweaters")tiles.push(tile(name,count,c===name,name));
+ });
+ $("categoryTiles").innerHTML=tiles.join("");
+ var countEl=$("categoryProductCount");
+ if(countEl)countEl.textContent=(base.length+" products");
+ $("catgrid").innerHTML=base.map(function(p){return card(p,P.indexOf(p))}).join("")||'<div class="empty" style="grid-column:1/-1">No products found in this category.</div>';
 }
-if(st.priceRange && st.priceRange!="All Price"){list=list.slice().sort(function(a,b){var pa=a.price!==undefined?a.price:30,pb=b.price!==undefined?b.price:30;if(pa!==pb)return pa-pb;return P.indexOf(a)-P.indexOf(b)});}
-return list;}
-function renderCat(){var c=st.cat,base=baseList(),have={},L=st.letters;
- $("catchips").innerHTML=LEFT.map(chip).join("");
- $("pricechips").innerHTML=PRICE_RANGES.map(priceChip).join("");
- base.forEach(function(p){have[p.name[0].toUpperCase()]=1});
- var sum=L.length?L.join(", "):(st.az?"sorted":"");
- $("azbar").innerHTML='<button class="azh" data-azt>A-Z<span>'+(sum?sum+" ":"")+(st.azOpen?"▴":"▾")+'</span></button>'+(st.azOpen?'<div class="azb">'+AZL.map(function(x){return '<button data-lt="'+x+'"'+(have[x]?'':' disabled')+(L.indexOf(x)>-1?' class="on"':'')+'>'+x+'</button>'}).join("")+'</div><div class="chips"><button class="chip'+(st.az?' on':'')+'" data-azs>Sort A-Z</button>'+(L.length?'<button class="chip" data-lt="">Clear letters</button>':'')+'</div>':'');
- $("stychips").innerHTML=CATS[c]?['<button class="chip'+(st.sty?'':' on')+'" data-sty="">All</button>'].concat(CATS[c].map(function(x){return '<button class="chip'+(x==st.sty?' on':'')+'" data-sty="'+x+'">'+x+'</button>'})).join(""):"";
- var list=base;if(L.length)list=list.filter(function(p){return L.indexOf(p.name[0].toUpperCase())>-1});
- if(L.length||st.az){list=list.slice().sort(function(p,q){return p.name.localeCompare(q.name)});var h="",f="";list.forEach(function(p){var k=p.name[0].toUpperCase();if(k!=f){f=k;h+='<div class="az">'+k+'</div>'}h+=card(p, P.indexOf(p))});$("catgrid").innerHTML=h;return}
- $("catgrid").innerHTML=list.map(function(p){return card(p, P.indexOf(p))}).join("")}
 var bought=[];try{bought=JSON.parse(localStorage.getItem("pros_bought")||"[]")}catch(e){}
 function citem(i){var p=gp(i),b=bought.indexOf(i)>-1,pPrice=p.price!==undefined?p.price:30;return '<div class="item'+(b?' done':'')+'"><button class="ck'+(b?' on':'')+'" data-mark="'+i+'" role="checkbox" aria-checked="'+b+'" aria-label="'+(b?'Mark as not purchased':'Mark as purchased')+'">'+(b?'✓':'')+'</button><div class="th" data-open="'+i+'" style="background:'+pic(p,0)+'">'+ltr(p)+'</div><div data-open="'+i+'"><b class="notranslate product-name-anton" translate="no">'+esc(p.name)+'</b>'+priceHtml(p,"font-size:13px")+'<div style="color:var(--mu);font-size:13px">'+p.cat+'</div></div><button class="rm" data-rm="'+i+'" aria-label="Remove">✕</button></div>'}
 function renderCart(){cart=cart.filter(function(i){return gp(i)});bought=bought.filter(function(i){return gp(i)});try{localStorage.setItem("pros_cart",JSON.stringify(cart));localStorage.setItem("pros_bought",JSON.stringify(bought))}catch(e){}
@@ -1163,7 +1172,7 @@ document.addEventListener("click",function(e){if(swd){swd=false;return}
  else if(d.azt!==undefined){st.azOpen=!st.azOpen;renderCat()}
  else if(d.azs!==undefined){st.az=!st.az;renderCat()}
  else if(d.lt!==undefined){if(d.lt==""){st.letters=[]}else{var ix=st.letters.indexOf(d.lt);if(ix>-1)st.letters.splice(ix,1);else st.letters.push(d.lt)}renderCat()}
- else if(d.cat){prosPushHistory("category",null);st.letters=[];st.cat=d.cat;st.sty="";st.priceRange="";renderCat();show("category", true)}
+ else if(d.categoryReset!==undefined){st.cat="All";st.sty="";st.priceRange="";renderCat()}\n else if(d.cat){st.cat=d.cat;st.sty="";st.priceRange="";renderCat()}
  else if(d.sty!==undefined){st.letters=[];st.sty=d.sty;renderCat()}
  else if(d.pr!==undefined){st.priceRange=d.pr;renderCat()}
  else if(d.add){if(cart.indexOf(+d.add)<0)cart.push(+d.add);renderCart();if(t.classList.contains("ic")){t.innerHTML=CK}else{t.textContent="✓";t.style.fontSize="22px"}}
