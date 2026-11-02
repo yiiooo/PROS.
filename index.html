@@ -1002,7 +1002,7 @@ function show(v, restoreScroll){
  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
- var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail"||v==="category");
+ var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail");
  $("sr").style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
 
  if(v=="detail"){
@@ -1165,7 +1165,7 @@ var ic={
  cart:'<rect x="5" y="9" width="14" height="11" rx="3"/><path d="M9 9V7a3 3 0 016 0v2"/>',
  about:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'
 };
-var lb={home:"Home",category:"Category",collection:"Collections",cart:"Cart",about:"About"};
+var lb={home:"Home",category:"Categories",collection:"Collections",cart:"Cart",about:"About"};
 $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+'" aria-label="'+lb[k]+'"><svg viewBox="0 0 24 24">'+ic[k]+'</svg><span>'+lb[k]+'</span>'+(k=="cart"?'<b class="dot" id="dot"></b>':'')+'</button>'}).join("");
  var prosBack=document.createElement("button");prosBack.id="prosGlobalBack";prosBack.type="button";prosBack.dataset.prosGlobalBack="";prosBack.setAttribute("aria-label","Kembali ke halaman sebelumnya");prosBack.innerHTML='<span aria-hidden="true">‹</span>';prosBack.hidden=true;document.body.appendChild(prosBack);
  var prosBackCss=document.createElement("style");prosBackCss.textContent='#prosGlobalBack{position:absolute;top:140px;left:14px;right:auto;z-index:1200;width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;backdrop-filter:blur(8px)}#prosGlobalBack[hidden]{display:none}@media(min-width:900px){#prosGlobalBack{top:140px;left:22px;right:auto}}#prosGlobalBack span{font-size:34px;line-height:1}.product-back{position:static;justify-self:start;align-self:start;margin:0 0 -8px 0;width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;grid-column:1/-1}';document.head.appendChild(prosBackCss);
