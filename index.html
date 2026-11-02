@@ -1109,7 +1109,7 @@ function prepareVideoFrameThumbnails(root){
 
 function renderHome(){
  var homeCats=$("homecats");if(homeCats)homeCats.innerHTML="";
- var allBtn=$("allCatBtn");if(allBtn){allBtn.style.background="";allBtn.innerHTML="<span>Explore All Categories</span><span>↗</span>";allBtn.dataset.cat="All";}
+ var allBtn=$("allCatBtn");if(allBtn){allBtn.style.background="";allBtn.innerHTML="<span>Explore All Categories</span><span>↗</span>";allBtn.removeAttribute("data-cat");allBtn.dataset.go="category";}
  $("best").innerHTML=P.filter(function(p){return p.best}).map(function(p){return card(p, P.indexOf(p))}).join("")||'<div class="empty" style="grid-column:1/-1">No best sellers yet.</div>'}
 var CATEGORY_ICONS={
  "All Products":'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
@@ -1126,7 +1126,7 @@ var CATEGORY_ICONS={
  "Sets":'<path d="M5 4h14v7H5zM5 13h14v7H5z"/>',
  "Skirts & Dresses":'<path d="M9 4h6l1 5 5 12H3L8 9z"/>'
 };
-function renderCat(){
+function baseList(){\n var list=Array.isArray(P)?P.slice():[];\n if(st.cat&&st.cat!=="All")list=list.filter(function(p){return String(p.cat||"").toLowerCase()===String(st.cat).toLowerCase()||((st.cat==="T-Shirts")&&String(p.cat||"").toLowerCase()==="t-shirt")||((st.cat==="Hoodies & Sweaters")&&["hoodie","sweatshirt","sweater"].indexOf(String(p.cat||"").toLowerCase())>-1);});\n if(st.sty)list=list.filter(function(p){return String(p.sty||"").toLowerCase()===String(st.sty).toLowerCase()||(p.taxonomy&&Array.isArray(p.taxonomy.styles)&&p.taxonomy.styles.indexOf(st.sty)>-1);});\n if(st.priceRange){list=list.filter(function(p){var price=Number(String(p.price==null?"":p.price).replace(/[^0-9.]/g,""));if(!Number.isFinite(price))return false;if(st.priceRange==="$20 - $40")return price>=20&&price<=40;if(st.priceRange==="$41 - $70")return price>=41&&price<=70;if(st.priceRange==="$71 - $100+")return price>=71;return true;});}\n return list;\n}\nfunction renderCat(){
  var c=st.cat,base=baseList(),tiles=[];
  function tile(label,count,active,catValue){
   var svg=CATEGORY_ICONS[label]||CATEGORY_ICONS["Accessories"];
@@ -1166,7 +1166,7 @@ $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+
 document.addEventListener("click",function(e){if(swd){swd=false;return}
  if(e.target.classList&&e.target.classList.contains("sheet")){closeSheet(e.target);return}
  var t=e.target.closest("[data-go],[data-cat],[data-category-reset],[data-sty],[data-pr],[data-add],[data-buy],[data-rm],[data-open],[data-back],[data-pros-global-back],[data-zoom],[data-th],[data-vid],[data-close],[data-lt],[data-azt],[data-azs],[data-mark],[data-gocol],[data-colzoom],[data-color-variant]");if(!t)return;var d=t.dataset;
- if(d.go!==undefined){if($("menuSheet").classList.contains("on"))closeSheet($("menuSheet"));prosPushHistory(d.go,null);if(d.go=="collection")renderCollections();show(d.go, true)}
+ if(d.go!==undefined){if($("menuSheet").classList.contains("on"))closeSheet($("menuSheet"));prosPushHistory(d.go,null);if(d.go==="collection")renderCollections();if(d.go==="category"){st.cat="All";st.sty="";st.priceRange="";renderCat();}show(d.go, true)}
  else if(d.gocol!==undefined){prosPushHistory("collection",null);renderCollections();show("collection", true)}
  else if(d.colzoom!==undefined){openColZoom(d.colzoom)}
  else if(d.azt!==undefined){st.azOpen=!st.azOpen;renderCat()}
