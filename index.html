@@ -707,7 +707,7 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
  <h2>Best Sellers</h2><div class="grid" id="best"></div>
 </section>
 <section class="view" id="category">
- <div class="category-head"><div class="category-kicker" style="display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:48px;width:100%;"><button type="button" data-back aria-label="Kembali ke halaman sebelumnya" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px;width:46px;height:46px;align-items:center;justify-content:center;margin:0;padding:0;border:1px solid #77716a;border-radius:12px;background:#24211f;color:#F0EAE0;font:600 32px/1 Inter,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;position:relative;z-index:5;">←</button><span style="display:block;">SHOP PROS</span></div><h2>ALL CATEGORIES</h2></div>
+ <div class="category-head"><div class="category-kicker" style="display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:48px;width:100%;"><button type="button" data-back aria-label="Kembali ke halaman sebelumnya" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;flex:0 0 46px;width:46px;height:46px;align-items:center;justify-content:center;margin:0;padding:0;border:1px solid #77716a;border-radius:12px;background:#24211f;color:#F0EAE0;font:600 32px/1 Inter,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;position:absolute;top:140px;left:14px;z-index:5;">←</button><span style="display:block;margin-left:58px;">SHOP PROS</span></div><h2>ALL CATEGORIES</h2></div>
  <p class="mu" style="margin:10px 0 24px;font-size:16px;line-height:1.45">Choose a category to start exploring. Use filters when you need more specific results.</p>
  <div id="categoryTiles" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 28px"></div>
  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--ln);padding-top:18px;margin:0 0 18px"><h3 id="categoryProductCount" style="margin:0;font-size:20px"></h3><button type="button" class="chip" data-category-reset style="padding:12px 16px">All Products</button></div>
@@ -1002,7 +1002,7 @@ function show(v, restoreScroll){
  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
- var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail");
+ var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail"||v==="category");
  $("sr").style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
 
  if(v=="detail"){
