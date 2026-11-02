@@ -90,8 +90,11 @@
           var p=typeof gp==="function"?gp(arguments[0]):null;
           var host=document.querySelector("#detail .info");
           if(p&&host){
+            var sizeSummary=Array.from(host.querySelectorAll("details summary")).find(function(el){return /^size guide$/i.test((el.textContent||"").trim());});
             var videos=Array.from(host.querySelectorAll(".pdl")).find(function(el){return /product videos/i.test(el.textContent||"");});
-            if(videos)videos.insertAdjacentHTML("beforebegin",customerMarkup(p));
+            var markup=customerMarkup(p);
+            if(sizeSummary&&sizeSummary.parentNode)sizeSummary.parentNode.insertAdjacentHTML("beforebegin",markup);
+            else if(videos)videos.insertAdjacentHTML("beforebegin",markup);
           }
         }catch(err){console.warn("PROS product information display:",err);}
         return result;
