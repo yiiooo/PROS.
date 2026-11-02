@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-var zoneSelector=".pros-product-photo-zone";
+var zoneSelector=".pros-product-photo-zone",pendingPhoto=false;
 function activeZone(node){return node&&node.closest?node.closest(zoneSelector):null}
 function photoPath(zone){return zone&&zone.getAttribute("data-product-photo-zone")}
 function addFiles(zone,files){
@@ -10,6 +10,7 @@ function addFiles(zone,files){
  var valid=Array.from(files).filter(function(f){return f&&f.type&&f.type.indexOf("image/")===0});
  if(!valid.length)return;
  if(window.prosUndoCapture)window.prosUndoCapture();
+ pendingPhoto=true;
  window.doUp({files:valid,value:"",dataset:{up:path,max:"99"}},{up:path,max:"99"});
 }
 document.addEventListener("paste",function(e){
