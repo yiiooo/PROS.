@@ -1,8 +1,10 @@
 (function(){
 "use strict";
-var zoneSelector=".pros-product-photo-zone",pendingPhoto=false;
+var zoneSelector=".pros-product-photo-zone",pendingPhoto=false,lastZone=null;
 function activeZone(node){return node&&node.closest?node.closest(zoneSelector):null}
 function photoPath(zone){return zone&&zone.getAttribute("data-product-photo-zone")}
+document.addEventListener("pointerdown",function(e){var z=activeZone(e.target);if(z)lastZone=z;},true);
+document.addEventListener("focusin",function(e){var z=activeZone(e.target);if(z)lastZone=z;},true);
 function addFiles(zone,files){
  if(!zone||!files||!files.length||!window.ADMIN||typeof window.doUp!=="function")return;
  var path=photoPath(zone);
@@ -14,7 +16,7 @@ function addFiles(zone,files){
  window.doUp({files:valid,value:"",dataset:{up:path,max:"99"}},{up:path,max:"99"});
 }
 document.addEventListener("paste",function(e){
- var zone=activeZone(document.activeElement)||activeZone(e.target);
+ var zone=activeZone(document.activeElement)||activeZone(e.target)||(lastZone&&lastZone.isConnected?lastZone:null);
  if(!zone)return;
  var items=e.clipboardData&&e.clipboardData.items;
  if(!items)return;
@@ -71,9 +73,23 @@ document.addEventListener("drop",function(e){
  var to=Number((target.getAttribute("data-product-image-item")||"").split("|").pop());
  if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<0||from>=arr.length||to>=arr.length||from===to)return;
  if(window.prosUndoCapture)window.prosUndoCapture();
- var moved=arr.splice(from,1)[0];arr.splice(to,0,moved);
+ var moved=arr.splice(from,1)[0];arr.splice(from<to?to-1:to,0,moved);
  if(window.prosUndoCommit)window.prosUndoCommit();
  dragged=null;
  if(typeof window.renderAd==="function")window.renderAd();
 });
+if(typeof window.processNextCropFile==="function"&&!window.processNextCropFile.__prosPhotoUndoWrapped){
+ var originalProcessNextCropFile=window.processNextCropFile;
+ var wrappedProcessNextCropFile=function(){
+  var result=originalProcessNextCropFile.apply(this,arguments);
+  if(pendingPhoto&&(!window.cropFilesQueue||window.cropFilesQueue.length===0)&&!window.cropTarget){
+   pendingPhoto=false;
+   if(window.prosUndoCommit)window.prosUndoCommit();
+  }
+  return result;
+ };
+ wrappedProcessNextCropFile.__prosPhotoUndoWrapped=true;
+ window.processNextCropFile=wrappedProcessNextCropFile;
+}
+
 })();
