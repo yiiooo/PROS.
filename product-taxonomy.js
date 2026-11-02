@@ -83,7 +83,7 @@ document.addEventListener("change",function(e){
 });
 document.addEventListener("click",function(e){
  var s=e.target.closest("[data-pros-style]");if(s){goStyle(s.dataset.prosStyle);return}
- if(e.target.closest("[data-pros-viewall-styles]")){var x=document.getElementById("prosAllStyles");if(x)x.hidden=!x.hidden;return}
+ if(e.target.closest("[data-pros-viewall-styles]")){styleView();var sv=document.getElementById("prosStylesView");if(sv){document.querySelectorAll(".view").forEach(function(v){v.classList.toggle("on",v===sv)});window.scrollTo(0,0)}return}
  var nav=e.target.closest('[data-go="styles"]');if(nav){styleView();var sv=document.getElementById("prosStylesView");if(sv){document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("on",x===sv)});window.scrollTo(0,0)}}
 });
 
