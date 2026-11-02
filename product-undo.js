@@ -18,6 +18,10 @@ function push(before,after){
 function capture(){if(!busy&&!beforeAction)beforeAction=data()}
 function commit(){
  if(busy)return;
+ if(typingBefore&&beforeAction&&typingBefore===beforeAction){
+  if(typingTimer)clearTimeout(typingTimer);
+  typingTimer=null;typingBefore=null;
+ }
  var after=data();
  if(beforeAction){push(beforeAction,after);beforeAction=null;}
  update();
