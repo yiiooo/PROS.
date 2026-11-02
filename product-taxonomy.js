@@ -93,14 +93,14 @@ var shopState={category:"All",style:"",fit:"",occasion:"",gender:"",min:"",max:"
 function shopMatch(p){var t=productTax(p),q=String(shopState.query||"").toLowerCase().trim(),idx=(window.P||[]).indexOf(p),number=idx>=0?String(idx+1).padStart(2,"0"):"",id=String(p.id==null?"":p.id),haystack=(p.name+" "+p.cat+" "+p.sty+" "+t.styles.join(" ")).toLowerCase();var queryMatch=!q||haystack.indexOf(q)>-1||number===q||id===q||number.indexOf(q)>-1;return (shopState.category==="All"||t.categories.indexOf(shopState.category)>-1||p.cat===shopState.category)&&(!shopState.style||t.styles.indexOf(shopState.style)>-1)&&(!shopState.fit||productHasFit(p,t,shopState.fit))&&(!shopState.occasion||t.occasions.indexOf(shopState.occasion)>-1)&&(!shopState.gender||t.gender===shopState.gender||t.gender==="Unisex")&&(!shopState.min||Number(p.price||0)>=Number(shopState.min))&&(!shopState.max||Number(p.price||0)<=Number(shopState.max))&&queryMatch}
 function shopIcon(name){
  var paths={
- "T-Shirts":'<path d="M7 4 3 7l2 5 3-2v10h8V10l3 2 2-5-4-3-3 2h-4L7 4Z"/>',
- "Hoodies & Sweaters":'<path d="M8 4 5 6 3 11l3 2 2-3v10h8V10l2 3 3-2-2-5-3-2-3 2h-2L8 4Z"/><path d="M9 4v4h6V4"/>',
- "Jackets":'<path d="M8 4 5 6 3 11l3 2 2-3v10h8V10l2 3 3-2-2-5-3-2-3 2h-2L8 4Z"/><path d="M12 6v14M9 10h.01M15 10h.01"/>',
- "Shirts":'<path d="M8 3 12 7 16 3 21 7 18 13 15.5 11.5V21H8.5V11.5L6 13 3 7 8 3Z"/><path d="M10 5.2 12 7l2-1.8M12 7v3"/>',
+ "T-Shirts":'<path d="M7 4 3 7l2 5 3-2v10h8V10l3 2 2-5-4-3-3 2h-4L7 4Z"/><path d="M9 11h6l-1.2 2H10.2L9 11Z"/><path d="M10 11l2 2 2-2"/>',
+ "Hoodies & Sweaters":'<path d="M8 7c0-3 2-5 4-5s4 2 4 5l3 2 2 5-4 2-1-3v8H8v-8l-1 3-4-2 2-5 3-2Z"/><path d="M8 7c1 2 2.3 3 4 3s3-1 4-3M9 14h6v4H9z"/>',
+ "Jackets":'<path d="M8 4 5 6 3 11l3 2 2-3v10h8V10l2 3 3-2-2-5-3-2-3 2h-2L8 4Z"/><path d="m9 4 3 4 3-4M12 8v12M8 10l2 2m6-2-2 2"/>',
+ "Shirts":'<path d="M8 3 12 7 16 3 21 7 18 13 15.5 11.5V21H8.5V11.5L6 13 3 7 8 3Z"/><path d="m9 4 3 3 3-3M12 7v14M12 10h.01M12 13h.01M12 16h.01"/>',
  "Pants":'<path d="M6 4h12l-1 16h-5l-1-9-1 9H5L6 4Z"/><path d="M6 8h12"/>',
  "Shorts":'<path d="M6 4h12l-1 10h-5l-1-5-1 5H5L6 4Z"/><path d="M6 8h12"/>',
- "Shoes":'<path d="M4 14c2 0 4-2 5-5l3 3 5 2c2 1 3 2 3 4v2H4v-6Z"/><path d="M8 17h.01M12 17h.01M16 17h.01"/>',
- "Headwear":'<path d="M4 14a8 8 0 0 1 16 0v2H4v-2Z"/><path d="M3 16h18l-2 3H5l-2-3Z"/>',
+ "Shoes":'<path d="M3 15c3 0 5-2 6-6l3 3 5 2c2 1 4 1 4 4v2H3v-5Z"/><path d="m8 13 2 1m1-3 2 2m-5 5h.01M3 17h18"/>',
+ "Headwear":'<path d="M4 15a8 8 0 0 1 16 0v2H4v-2Z"/><path d="M2 17h20l-2 3H4l-2-3Z"/><path d="M9 8c1-2 5-2 6 0"/>',
  "Bags":'<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/>',
  "Accessories":'<circle cx="12" cy="12" r="7"/><path d="M5 12h14M12 5v14"/>',
  "Sets":'<path d="M7 4 4 6l-1 5 3 1 2-3v5h8v-5l2 3 3-1-1-5-3-2-3 2h-4L7 4Z"/><path d="M7 14h10l1 6h-5l-1-3-1 3H6l1-6Z"/>',
