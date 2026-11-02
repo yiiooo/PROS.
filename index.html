@@ -1172,7 +1172,8 @@ document.addEventListener("click",function(e){if(swd){swd=false;return}
  else if(d.azt!==undefined){st.azOpen=!st.azOpen;renderCat()}
  else if(d.azs!==undefined){st.az=!st.az;renderCat()}
  else if(d.lt!==undefined){if(d.lt==""){st.letters=[]}else{var ix=st.letters.indexOf(d.lt);if(ix>-1)st.letters.splice(ix,1);else st.letters.push(d.lt)}renderCat()}
- else if(d.categoryReset!==undefined){st.cat="All";st.sty="";st.priceRange="";renderCat()}\n else if(d.cat){st.cat=d.cat;st.sty="";st.priceRange="";renderCat()}
+ else if(d.categoryReset!==undefined){st.cat="All";st.sty="";st.priceRange="";renderCat()}
+ else if(d.cat){st.cat=d.cat;st.sty="";st.priceRange="";renderCat()}
  else if(d.sty!==undefined){st.letters=[];st.sty=d.sty;renderCat()}
  else if(d.pr!==undefined){st.priceRange=d.pr;renderCat()}
  else if(d.add){if(cart.indexOf(+d.add)<0)cart.push(+d.add);renderCart();if(t.classList.contains("ic")){t.innerHTML=CK}else{t.textContent="✓";t.style.fontSize="22px"}}
