@@ -1,13 +1,13 @@
 (function(){
 "use strict";
-var DEFAULT_CATEGORIES=["T-Shirts","Hoodies","Pants","Outerwear","Shirts","Shorts","Accessories","Footwear"];
-var DEFAULT_STYLES=["Oversized","Boxy","Graphic","Minimalist","Vintage","Y2K","Skate","Gothic","Techwear","Workwear","Streetwear","Athleisure"];
-var DEFAULT_FITS=["Oversized","Relaxed","Regular","Slim","Baggy","Wide-leg","Cropped"];
-var DEFAULT_OCCASIONS=["Everyday","Skateboarding","Casual","Travel","Gym","Outdoor","Party"];
+var DEFAULT_CATEGORIES=["T-Shirts","Hoodies & Sweatshirts","Jackets","Pants","Shorts","Sneakers & Shoes","Headwear","Bags","Jewelry","Eyewear","Shirts & Polos","Long Sleeves","Knitwear","Vests","Tracksuits & Sets","Skirts","Dresses","Socks","Belts & Wallets","Other Accessories"];
+var DEFAULT_STYLES=["Oversized Streetwear","Minimalist","Japanese Streetwear","Korean Streetwear","Y2K","Vintage / Retro","Grunge","Punk","Techwear","Gorpcore","Skatewear","Hip-Hop","Athleisure","Luxury Streetwear","Darkwear","Avant-Garde","Military","Workwear","Preppy","Blokecore","Indie Sleaze","Boho Streetwear","Skate Punk","Cyberpunk","Racing / Moto","Americana","90s Streetwear","Urban Outdoor","Artsy Streetwear","Casual Streetwear"];
+var DEFAULT_FITS=["Oversized","Relaxed","Regular","Slim Fit","Baggy","Wide Leg"];
+var DEFAULT_OCCASIONS=["Daily Wear","Outdoor","Party","Sports","Travel","Casual"];
 var state={categories:DEFAULT_CATEGORIES.slice(),styles:DEFAULT_STYLES.slice(),fits:DEFAULT_FITS.slice(),occasions:DEFAULT_OCCASIONS.slice(),products:{}};
 function uniq(a){return Array.from(new Set((Array.isArray(a)?a:[]).map(function(x){return String(x||"").trim()}).filter(Boolean)))}
-function legacy(p){return {categories:uniq([p.cat]),styles:uniq([p.sty]),fit:"",gender:"Unisex",occasions:[],attributes:[]}}
-function productTax(p){var t=p.taxonomy&&typeof p.taxonomy==="object"?p.taxonomy:state.products[String(p.id)]||legacy(p);return {categories:uniq(t.categories&&t.categories.length?t.categories:[p.cat]),styles:uniq(t.styles&&t.styles.length?t.styles:[p.sty]),fit:t.fit||"",gender:t.gender||"Unisex",occasions:uniq(t.occasions),attributes:uniq(t.attributes)}}
+function legacy(p){return {categories:uniq([p.cat]),styles:uniq([p.sty]),fit:"",gender:"Unisex",size:[],color:[],brand:"",material:"",occasions:[],attributes:[]}}
+function productTax(p){var t=p.taxonomy&&typeof p.taxonomy==="object"?p.taxonomy:state.products[String(p.id)]||legacy(p);return {categories:uniq(t.categories&&t.categories.length?t.categories:[p.cat]),styles:uniq(t.styles&&t.styles.length?t.styles:[p.sty]),fit:t.fit||"",gender:t.gender||"Unisex",size:uniq(t.size),color:uniq(t.color),brand:t.brand||"",material:t.material||"",occasions:uniq(t.occasions),attributes:uniq(t.attributes)}}
 function attach(data,products){
  if(data&&typeof data==="object"){
   state.categories=uniq(data.categories).length?uniq(data.categories):DEFAULT_CATEGORIES.slice();
