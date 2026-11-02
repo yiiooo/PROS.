@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROS — Product Information Preview</title>
+<style>
+:root{--ink:#151515;--muted:#707070;--line:#e7e7e7;--paper:#fff;--soft:#f6f6f6;--accent:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:#f2f2f2;color:var(--ink);font:14px/1.5 Inter,Arial,sans-serif}
+.top{height:58px;background:#090909;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 max(20px,calc((100vw - 1180px)/2));font-weight:700}.logo{font-size:24px;letter-spacing:-1px}.nav{display:flex;gap:26px;color:#ddd;font-size:13px}
+.wrap{max-width:1180px;margin:24px auto;padding:0 18px}.switch{display:flex;gap:8px;margin-bottom:16px}.switch button,.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 14px;font-weight:650;cursor:pointer}.switch button.active,.btn.primary{background:#111;color:#fff;border-color:#111}
+.product{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:28px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.gallery{display:grid;grid-template-columns:64px 1fr;gap:12px}.thumbs{display:grid;gap:9px;align-content:start}.thumb{height:70px;border:1px solid var(--line);border-radius:8px;background:#eee;display:grid;place-items:center;font-size:11px;color:#555}.hero{min-height:430px;border-radius:12px;background:linear-gradient(145deg,#f4f4f4,#ddd);display:grid;place-items:center;overflow:hidden}.shirt{width:64%;height:72%;background:#111;clip-path:polygon(27% 0,40% 5%,60% 5%,73% 0,100% 18%,87% 40%,78% 33%,78% 100%,22% 100%,22% 33%,13% 40%,0 18%);position:relative;filter:drop-shadow(0 12px 12px #0002)}.shirt:after{content:"PROS ✳";position:absolute;top:38%;left:0;right:0;color:#fff;text-align:center;font-size:21px;font-weight:900;letter-spacing:2px}
+.stock{display:inline-block;background:#e6f8e9;color:#167a32;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}.name{font-size:25px;line-height:1.2;margin:9px 0}.price{font-size:25px;font-weight:800;margin:12px 0}.muted{color:var(--muted)}.swatches,.sizes{display:flex;gap:9px;margin:8px 0 15px}.swatch{width:28px;height:28px;border:2px solid #ddd;border-radius:50%;background:#111}.swatch:nth-child(2){background:#aaa}.swatch:nth-child(3){background:#fff}.size{padding:8px 12px;border:1px solid var(--line);border-radius:8px}.actions{display:grid;gap:8px}.actions button{padding:12px;border-radius:9px;border:1px solid #111;font-weight:700}.cart{background:#111;color:#fff}
+.info-card{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px}.info-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.info-head h2{margin:0;font-size:21px}.tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 0 14px;scrollbar-width:thin;border-bottom:1px solid var(--line)}.tabs button{white-space:nowrap;border:1px solid #ddd;border-radius:99px;background:#f7f7f7;padding:8px 16px;font-weight:650;cursor:pointer}.tabs button.active{border-color:var(--accent);color:var(--accent);background:#eff5ff}
+.highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.highlight{padding:12px;background:#f7f7f7;border-radius:10px;font-weight:600}.description{padding:4px 0 15px;border-bottom:1px solid var(--line)}.spec-section{padding:15px 0;border-bottom:1px solid var(--line)}.spec-section:last-child{border-bottom:0}.spec-section h3{font-size:16px;margin:0 0 9px}.spec-table{width:100%;border-collapse:collapse}.spec-table th,.spec-table td{text-align:left;padding:8px 10px;border-bottom:1px solid #eee;vertical-align:top}.spec-table th{width:43%;font-weight:650;color:#303030}.spec-table tr:last-child th,.spec-table tr:last-child td{border-bottom:0}.explore{margin:20px 0;background:#fff;padding:18px;border-radius:14px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.mini{height:150px;border-radius:10px;background:linear-gradient(140deg,#eee,#ccc);display:grid;place-items:center;font-weight:800}
+.admin{display:none;background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px}.admin.show{display:block}.admin h2{margin-top:0}.admin-section{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}.field{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:8px 0}.field input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}.danger{color:#b42318}.note{font-size:12px;color:var(--muted)}
+.undo-toolbar{position:fixed;z-index:1000;top:72px;right:22px;display:none;align-items:center;gap:7px;padding:8px;background:#fff;border:1px solid #dedede;border-radius:12px;box-shadow:0 8px 28px #0002}.undo-toolbar .btn{min-width:82px}.undo-toolbar .btn:disabled{opacity:.38;cursor:not-allowed}.undo-toolbar #historyStatus{max-width:150px;font-size:11px;margin:0 4px}.admin-mode .undo-toolbar{display:flex}
+@media(max-width:720px){.undo-toolbar{top:62px;right:9px;gap:5px;padding:6px}.undo-toolbar .btn{min-width:66px;padding:8px 10px;font-size:12px}.undo-toolbar #historyStatus{display:none}}
+@media(max-width:720px){.top{height:54px;padding:0 14px}.nav{display:none}.wrap{margin:12px auto;padding:0 10px}.product{display:block;padding:12px;border-radius:12px}.gallery{display:block}.thumbs{display:none}.hero{min-height:0;aspect-ratio:1/1;margin-bottom:14px}.shirt{height:76%;width:66%}.name{font-size:21px}.price{font-size:23px}.info-card{margin-top:16px;padding:14px 12px}.info-head h2{font-size:19px}.tabs{margin:0 -2px;gap:7px}.tabs button{padding:8px 12px;font-size:12px}.highlights{grid-template-columns:1fr 1fr;gap:7px}.highlight{font-size:12px;padding:9px}.description{font-size:13px}.spec-section{padding:12px 0}.spec-table th,.spec-table td{padding:8px 6px;font-size:12px}.spec-table th{width:44%}.cards{grid-template-columns:repeat(2,1fr)}.mini{height:120px}.field{grid-template-columns:1fr 1fr}.field button{grid-column:1/-1}.admin{padding:14px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="logo">PROS.</div><nav class="nav"><span>Shop</span><span>Category⌄</span><span>About</span><span>Contact</span></nav><div>⌕　♙　▢</div></header>
+<main class="wrap">
+<div class="switch"><button class="active" id="storeBtn">Customer view</button><button id="adminBtn">Admin editor concept</button></div>
+<section id="store">
+<div class="product">
+<div class="gallery"><div class="thumbs"><div class="thumb">Front</div><div class="thumb">Back</div><div class="thumb">Detail</div><div class="thumb">Fabric</div></div><div class="hero"><div class="shirt"></div></div></div>
+<div><span class="stock">In stock</span><h1 class="name">PROS Streetwear Oversized Graphic T-Shirt</h1><div class="muted">Product preview · sample content</div><div class="price">$49.99</div><b>Color: Black</b><div class="swatches"><span class="swatch"></span><span class="swatch"></span><span class="swatch"></span></div><b>Size</b><div class="sizes"><span class="size">S</span><span class="size">M</span><span class="size">L</span><span class="size">XL</span><span class="size">XXL</span></div><p class="note">Size Guide stays as the existing PROS feature and is not changed in this concept.</p><div class="actions"><button class="cart">Add to Cart</button><button>♡　Add to Wishlist</button></div></div>
+</div>
+<section class="info-card">
+<div class="info-head"><h2>Product Information</h2><span class="note">Product details</span></div>
+<div class="highlights"><div class="highlight">✦ Distinctive graphic design</div><div class="highlight">✦ Relaxed streetwear fit</div><div class="highlight">✦ Everyday styling</div></div>
+<div class="description"><h3>Product Description</h3><p>Bring a bold streetwear look to everyday outfits. This oversized graphic tee pairs an expressive front design with an easy-to-style silhouette. Use the product details below to review its construction, fabric and measurements before choosing your size.</p></div>
+<div class="tabs" id="tabs"><button class="active" data-target="style">Style</button><button data-target="item">Item Details</button><button data-target="features">Features &amp; Specs</button><button data-target="materials">Materials &amp; Care</button><button data-target="measurements">Measurements</button></div>
+<div id="style" class="spec-section"><h3>Style</h3><table class="spec-table"><tr><th>Style</th><td>Streetwear</td></tr><tr><th>Pattern</th><td>Graphic print</td></tr><tr><th>Occasion</th><td>Casual, everyday wear</td></tr><tr><th>Aesthetic</th><td>Urban / vintage-inspired</td></tr></table></div>
+<div id="item" class="spec-section"><h3>Item Details</h3><table class="spec-table"><tr><th>Brand</th><td>PROS</td></tr><tr><th>Department</th><td>Unisex</td></tr><tr><th>Item Type</th><td>T-Shirt</td></tr><tr><th>Model</th><td>PS-TS-001</td></tr></table></div>
+<div id="features" class="spec-section"><h3>Features &amp; Specs</h3><table class="spec-table"><tr><th>Fit Type</th><td>Oversized Fit</td></tr><tr><th>Sleeve Length</th><td>Short Sleeve</td></tr><tr><th>Neck Style</th><td>Crew Neck</td></tr><tr><th>Closure Type</th><td>Pull On</td></tr></table></div>
+<div id="materials" class="spec-section"><h3>Materials &amp; Care</h3><table class="spec-table"><tr><th>Material Type</th><td>Cotton</td></tr><tr><th>Fabric Type</th><td>Soft breathable fabric</td></tr><tr><th>Care Instructions</th><td>Machine wash cold</td></tr><tr><th>Stretchability</th><td>Low stretch</td></tr></table></div>
+<div id="measurements" class="spec-section"><h3>Measurements</h3><table class="spec-table"><tr><th>Item Length</th><td>Standard length</td></tr><tr><th>Unit Count</th><td>1 count</td></tr><tr><th>Garment Size Country</th><td>United States</td></tr></table></div>
+<div class="spec-section"><h3>Size Guide</h3><p class="note">Existing size chart location — unchanged. Existing Admin size-table editor is deliberately outside this redesign.</p></div>
+</section>
+<section class="explore"><h2>Explore Products</h2><div class="cards"><div class="mini">PROS TEE</div><div class="mini">GRAPHIC TEE</div><div class="mini">HOODIE</div><div class="mini">STREETWEAR</div></div></section>
+</section>
+<section class="admin" id="admin">
+<h2>Product Information · Admin concept</h2><p class="note">The new structured fields are separate from the current Size Guide editor. This is a design preview, not connected to Supabase.</p>
+<div class="admin-section"><h3>Product Highlights</h3><div class="field"><input value="Distinctive graphic design"><input value="A standout graphic for everyday streetwear"><button>×</button></div><button class="btn">+ Add highlight</button></div>
+<div class="admin-section"><h3>Product Description</h3><textarea style="width:100%;min-height:90px;padding:10px;border:1px solid #ddd;border-radius:8px">Write a clear product description. Paragraph breaks will be preserved.</textarea></div>
+<div id="adminSections"></div>
+<div class="admin-section"><h3>Image order</h3><p class="note">Image upload, paste, drag-and-drop and hold-to-reorder will be implemented in the next integration stage.</p><div class="field"><input value="Image 1 — Main photo"><input value="Image 2 — Back view"><button>↕</button></div></div>
+
+</section>
+</main>
+<div class="undo-toolbar" role="group" aria-label="Undo and redo controls"><button class="btn" id="undoBtn" type="button" disabled>↶ Undo</button><button class="btn" id="redoBtn" type="button" disabled>↷ Redo</button><span class="note" id="historyStatus" aria-live="polite">No changes to undo or redo.</span></div>
+<script>
+const sections=[["Style",[["Style","Streetwear"],["Pattern","Graphic print"],["Occasion","Casual, everyday wear"]]],["Item Details",[["Brand","PROS"],["Department","Unisex"],["Item Type","T-Shirt"]]],["Features & Specs",[["Fit Type","Oversized Fit"],["Sleeve Length","Short Sleeve"],["Neck Style","Crew Neck"]]],["Materials & Care",[["Material Type","Cotton"],["Fabric Type","Soft breathable fabric"],["Care Instructions","Machine wash cold"]]],["Measurements",[["Item Length","Standard length"],["Unit Count","1 count"],["Garment Size Country","United States"]]]];
+const adminSections=document.getElementById("adminSections");
+sections.forEach(([name,fields])=>{
+  const box=document.createElement("div");
+  box.className="admin-section";
+  const heading=document.createElement("h3"); heading.textContent=name; box.appendChild(heading);
+  fields.forEach(([k,v])=>{
+    const row=document.createElement("div"); row.className="field";
+    row.innerHTML='<input aria-label="Field name"><input aria-label="Field value"><button type="button" class="remove" aria-label="Remove field">×</button>';
+    row.querySelectorAll("input")[0].value=k; row.querySelectorAll("input")[1].value=v;
+    box.appendChild(row);
+  });
+  const add=document.createElement("button"); add.type="button"; add.className="btn add"; add.textContent="+ Add field"; box.appendChild(add);
+  adminSections.appendChild(box);
+});
+
+/* Undo / Redo history for all editable Product Information fields. */
+const undoBtn=document.getElementById("undoBtn");
+const redoBtn=document.getElementById("redoBtn");
+const historyStatus=document.getElementById("historyStatus");
+let undoStack=[], redoStack=[];
+function editorSnapshot(){
+  const clone=document.getElementById("admin").cloneNode(true);
+  clone.querySelectorAll("input").forEach((el,i)=>{
+    const live=document.querySelectorAll("#admin input")[i];
+    if(live) el.setAttribute("value",live.value); else el.setAttribute("value",el.value);
+  });
+  clone.querySelectorAll("textarea").forEach((el,i)=>{
+    const live=document.querySelectorAll("#admin textarea")[i];
+    el.textContent=live ? live.value : el.value;
+  });
+  return clone.innerHTML;
+}
+let lastSnapshot=editorSnapshot();
+function updateHistoryButtons(){
+  undoBtn.disabled=undoStack.length===0;
+  redoBtn.disabled=redoStack.length===0;
+  historyStatus.textContent=undoStack.length
+    ? "Undo available ("+undoStack.length+" step"+(undoStack.length===1?"":"s")+")"
+    : (redoStack.length ? "No more changes to undo." : "No changes to undo or redo.");
+}
+function recordEditorChange(){
+  const next=editorSnapshot();
+  if(next===lastSnapshot) return;
+  undoStack.push(lastSnapshot);
+  if(undoStack.length>100) undoStack.shift();
+  redoStack=[];
+  lastSnapshot=next;
+  updateHistoryButtons();
+}
+function restoreEditorSnapshot(snapshot){
+  document.getElementById("admin").innerHTML=snapshot;
+  lastSnapshot=editorSnapshot();
+  updateHistoryButtons();
+}
+document.getElementById("admin").addEventListener("input",()=>{
+  recordEditorChange();
+});
+document.getElementById("admin").addEventListener("change",()=>{
+  recordEditorChange();
+});
+document.getElementById("admin").addEventListener("click",event=>{
+  const add=event.target.closest(".add");
+  const remove=event.target.closest(".remove");
+  if(add){
+    const row=document.createElement("div"); row.className="field";
+    row.innerHTML='<input placeholder="Attribute name" aria-label="Field name"><input placeholder="Value" aria-label="Field value"><button type="button" class="remove" aria-label="Remove field">×</button>';
+    add.parentElement.insertBefore(row,add);
+    recordEditorChange();
+  } else if(remove){
+    const row=remove.closest(".field");
+    if(row){row.remove();recordEditorChange();}
+  }
+});
+undoBtn.addEventListener("click",()=>{
+  if(!undoStack.length) return;
+  redoStack.push(lastSnapshot);
+  const previous=undoStack.pop();
+  restoreEditorSnapshot(previous);
+});
+redoBtn.addEventListener("click",()=>{
+  if(!redoStack.length) return;
+  undoStack.push(lastSnapshot);
+  const next=redoStack.pop();
+  restoreEditorSnapshot(next);
+});
+updateHistoryButtons();
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.target).scrollIntoView({behavior:"smooth",block:"start"});});
+document.getElementById("storeBtn").onclick=()=>{document.getElementById("store").style.display="block";document.getElementById("admin").classList.remove("show");document.body.classList.remove("admin-mode");document.getElementById("storeBtn").classList.add("active");document.getElementById("adminBtn").classList.remove("active");};
+document.getElementById("adminBtn").onclick=()=>{document.getElementById("store").style.display="none";document.getElementById("admin").classList.add("show");document.body.classList.add("admin-mode");document.getElementById("adminBtn").classList.add("active");document.getElementById("storeBtn").classList.remove("active");};
+</script>
+</body></html>
+<!-- Trigger isolated Cloudflare Pages preview build -->
