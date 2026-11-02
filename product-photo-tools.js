@@ -73,32 +73,23 @@ document.addEventListener("drop",function(e){
  var to=Number((target.getAttribute("data-product-image-item")||"").split("|").pop());
  if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<0||from>=arr.length||to>=arr.length||from===to)return;
  if(window.prosUndoCapture)window.prosUndoCapture();
- var moved=arr.splice(from,1)[0];arr.splice(from<to?to-1:to,0,moved);
+ var moved=arr[from];arr[from]=arr[to];arr[to]=moved;
  if(window.prosUndoCommit)window.prosUndoCommit();
  dragged=null;
  if(typeof window.renderAd==="function")window.renderAd();
 });
-if(typeof window.renderAd==="function"&&!window.renderAd.__prosPhotoUndoWrapped){
- var originalRenderAd=window.renderAd;
- var wrappedRenderAd=function(){
-  var result=originalRenderAd.apply(this,arguments);
-  if(pendingPhoto&&(!window.cropFilesQueue||window.cropFilesQueue.length===0)){
+if(typeof window.processNextCropFile==="function"&&!window.processNextCropFile.__prosPhotoUndoWrapped){
+ var originalProcessNextCropFile=window.processNextCropFile;
+ var wrappedProcessNextCropFile=function(){
+  var result=originalProcessNextCropFile.apply(this,arguments);
+  if(pendingPhoto&&(!window.cropFilesQueue||window.cropFilesQueue.length===0)&&!window.cropTarget){
    pendingPhoto=false;
    if(window.prosUndoCommit)window.prosUndoCommit();
   }
   return result;
  };
- wrappedRenderAd.__prosPhotoUndoWrapped=true;
- window.renderAd=wrappedRenderAd;
+ wrappedProcessNextCropFile.__prosPhotoUndoWrapped=true;
+ window.processNextCropFile=wrappedProcessNextCropFile;
 }
-var cropCancelButton=document.getElementById("cropCancel");
-if(cropCancelButton)cropCancelButton.addEventListener("click",function(){
- setTimeout(function(){
-  if(pendingPhoto&&(!window.cropFilesQueue||window.cropFilesQueue.length===0)&&!window.cropTarget){
-   pendingPhoto=false;
-   if(window.prosUndoCommit)window.prosUndoCommit();
-  }
- },0);
-});
 
 })();
