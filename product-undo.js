@@ -64,6 +64,8 @@ function install(){
   },true);
   ad.addEventListener("change",function(e){
    if(e.target&&e.target.type==="file"){capture();pendingAsync=true;return;}
+   var t=e.target;
+   if(t&&((t.matches("input:not([type=checkbox]):not([type=radio]):not([type=color]),textarea,[contenteditable=true]"))))return;
    if(!beforeAction)capture();
    setTimeout(commit,0);
   },true);
