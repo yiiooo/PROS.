@@ -90,7 +90,7 @@ document.addEventListener("click",function(e){
 });
 
 var shopState={category:"All",style:"",fit:"",occasion:"",gender:"",min:"",max:"",query:""};
-function shopMatch(p){var t=productTax(p),q=shopState.query.toLowerCase();return (shopState.category==="All"||t.categories.indexOf(shopState.category)>-1||p.cat===shopState.category)&&(!shopState.style||t.styles.indexOf(shopState.style)>-1)&&(!shopState.fit||productHasFit(p,t,shopState.fit))&&(!shopState.occasion||t.occasions.indexOf(shopState.occasion)>-1)&&(!shopState.gender||t.gender===shopState.gender||t.gender==="Unisex")&&(!shopState.min||Number(p.price||0)>=Number(shopState.min))&&(!shopState.max||Number(p.price||0)<=Number(shopState.max))&&(!q||(p.name+" "+p.cat+" "+p.sty+" "+t.styles.join(" ")).toLowerCase().indexOf(q)>-1)}
+function shopMatch(p){var t=productTax(p),q=String(shopState.query||"").toLowerCase().trim(),idx=(window.P||[]).indexOf(p),number=idx>=0?String(idx+1).padStart(2,"0"):"",id=String(p.id==null?"":p.id),haystack=(p.name+" "+p.cat+" "+p.sty+" "+t.styles.join(" ")).toLowerCase();var queryMatch=!q||haystack.indexOf(q)>-1||number===q||id===q||number.indexOf(q)>-1;return (shopState.category==="All"||t.categories.indexOf(shopState.category)>-1||p.cat===shopState.category)&&(!shopState.style||t.styles.indexOf(shopState.style)>-1)&&(!shopState.fit||productHasFit(p,t,shopState.fit))&&(!shopState.occasion||t.occasions.indexOf(shopState.occasion)>-1)&&(!shopState.gender||t.gender===shopState.gender||t.gender==="Unisex")&&(!shopState.min||Number(p.price||0)>=Number(shopState.min))&&(!shopState.max||Number(p.price||0)<=Number(shopState.max))&&queryMatch}
 function shopIcon(name){
  var paths={
  "T-Shirts":'<path d="M7 4 3 7l2 5 3-2v10h8V10l3 2 2-5-4-3-3 2h-4L7 4Z"/>',
