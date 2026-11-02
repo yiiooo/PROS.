@@ -1818,7 +1818,8 @@ async function saveChangesToStorage(){
   var pr=await sb.from("products").upsert(products,{onConflict:"id"}); if(pr.error)throw pr.error;
   var cr=await sb.from("collections").upsert(collections,{onConflict:"id"}); if(cr.error)throw cr.error;
   W.productInformation=window.prosProductInformationBuild?window.prosProductInformationBuild(W.products):{};
-  var settingKeys=["banner","heroBanner","catImages","social","gv","gp","ev","aboutPhotos","meta","productColorVariants","productInformation"];
+  W.productTaxonomy=window.prosTaxonomyBuild?window.prosTaxonomyBuild(W.products,W.productTaxonomy):W.productTaxonomy||{};
+   var settingKeys=["banner","heroBanner","catImages","social","gv","gp","ev","aboutPhotos","meta","productColorVariants","productInformation","productTaxonomy"];
   var settings=settingKeys.filter(function(k){return Object.prototype.hasOwnProperty.call(W,k);}).map(function(k){return {key:k,value:W[k]};});
   if(settings.length){var sr=await sb.from("site_settings").upsert(settings,{onConflict:"key"});if(sr.error)throw sr.error;}
   // Remove rows deleted in the admin panel, but only after successful upserts.
@@ -1979,6 +1980,7 @@ document.addEventListener("click", function(e){
 <script src="product-information.js"></script>
 <script src="product-undo.js"></script>
 <script src="product-photo-tools.js"></script>
+<script src="product-taxonomy.js"></script>
 <!-- PROS Supabase public catalogue integration -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -2034,9 +2036,11 @@ document.addEventListener("click", function(e){
         aboutPhotos: settings.aboutPhotos || (DB && DB.aboutPhotos) || {},
         meta: settings.meta || (DB && DB.meta) || {},
         productColorVariants: settings.productColorVariants || (DB && DB.productColorVariants) || {},
-        productInformation: settings.productInformation || (DB && DB.productInformation) || {}
+        productInformation: settings.productInformation || (DB && DB.productInformation) || {},
+         productTaxonomy: settings.productTaxonomy || (DB && DB.productTaxonomy) || {}
       };
       if(window.prosProductInformationAttach)window.prosProductInformationAttach(next.productInformation,next.products);
+       if(window.prosTaxonomyAttach)window.prosTaxonomyAttach(next.productTaxonomy,next.products);
       if (settings.meta && typeof settings.meta === "object") {
         Object.keys(settings.meta).forEach(function (key) {
           if (!Object.prototype.hasOwnProperty.call(next, key)) next[key] = settings.meta[key];
