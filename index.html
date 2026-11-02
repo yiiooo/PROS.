@@ -1126,7 +1126,14 @@ var CATEGORY_ICONS={
  "Sets":'<path d="M5 4h14v7H5zM5 13h14v7H5z"/>',
  "Skirts & Dresses":'<path d="M9 4h6l1 5 5 12H3L8 9z"/>'
 };
-function baseList(){\n var list=Array.isArray(P)?P.slice():[];\n if(st.cat&&st.cat!=="All")list=list.filter(function(p){return String(p.cat||"").toLowerCase()===String(st.cat).toLowerCase()||((st.cat==="T-Shirts")&&String(p.cat||"").toLowerCase()==="t-shirt")||((st.cat==="Hoodies & Sweaters")&&["hoodie","sweatshirt","sweater"].indexOf(String(p.cat||"").toLowerCase())>-1);});\n if(st.sty)list=list.filter(function(p){return String(p.sty||"").toLowerCase()===String(st.sty).toLowerCase()||(p.taxonomy&&Array.isArray(p.taxonomy.styles)&&p.taxonomy.styles.indexOf(st.sty)>-1);});\n if(st.priceRange){list=list.filter(function(p){var price=Number(String(p.price==null?"":p.price).replace(/[^0-9.]/g,""));if(!Number.isFinite(price))return false;if(st.priceRange==="$20 - $40")return price>=20&&price<=40;if(st.priceRange==="$41 - $70")return price>=41&&price<=70;if(st.priceRange==="$71 - $100+")return price>=71;return true;});}\n return list;\n}\nfunction renderCat(){
+function baseList(){
+ var list=Array.isArray(P)?P.slice():[];
+ if(st.cat&&st.cat!=="All")list=list.filter(function(p){return String(p.cat||"").toLowerCase()===String(st.cat).toLowerCase()||((st.cat==="T-Shirts")&&String(p.cat||"").toLowerCase()==="t-shirt")||((st.cat==="Hoodies & Sweaters")&&["hoodie","sweatshirt","sweater"].indexOf(String(p.cat||"").toLowerCase())>-1);});
+ if(st.sty)list=list.filter(function(p){return String(p.sty||"").toLowerCase()===String(st.sty).toLowerCase()||(p.taxonomy&&Array.isArray(p.taxonomy.styles)&&p.taxonomy.styles.indexOf(st.sty)>-1);});
+ if(st.priceRange){list=list.filter(function(p){var price=Number(String(p.price==null?"":p.price).replace(/[^0-9.]/g,""));if(!Number.isFinite(price))return false;if(st.priceRange==="$20 - $40")return price>=20&&price<=40;if(st.priceRange==="$41 - $70")return price>=41&&price<=70;if(st.priceRange==="$71 - $100+")return price>=71;return true;});}
+ return list;
+}
+function renderCat(){
  var c=st.cat,base=baseList(),tiles=[];
  function tile(label,count,active,catValue){
   var svg=CATEGORY_ICONS[label]||CATEGORY_ICONS["Accessories"];
