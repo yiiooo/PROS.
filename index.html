@@ -695,8 +695,6 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
   </button>
  </div>
 </header>
-<label class="search" id="sr"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input id="q" type="search" aria-label="Search products" placeholder="Search (name or product code/no., e.g. 01)"></label>
-
 <main>
 <section class="view on" id="home">
  <div class="hero" id="hb"></div>
@@ -1178,20 +1176,7 @@ document.addEventListener("click",function(e){if(swd){swd=false;return}
  else if(d.vid!==undefined){var s=(gp(st.pid).vids||[])[+d.vid];$("vb").innerHTML=(s?'<video src="'+s+'" controls playsinline preload="metadata"></video>':'<div class="ph">No video uploaded yet.<br>The video will appear here in its original aspect ratio.</div>')+'<button class="x" data-close>Close</button>';$("vs").classList.add("on")}
  else if(d.close!==undefined){var s2=t.closest(".sheet");closeSheet(s2)}});
 
-$("q").addEventListener("input",function(e){
- var v=e.target.value.trim().toLowerCase();
- if(!v){show("home", true);return}
- 
- var r=P.filter(function(p, index){
-  var codeNum = String(index + 1).padStart(2, '0');
-  var codeNumSimple = String(p.id);
-  var targetText = (codeNum + " " + codeNumSimple + " " + p.name + " " + p.cat + " " + p.sty).toLowerCase();
-  return targetText.indexOf(v) > -1;
- });
 
- $("resgrid").innerHTML=r.length?r.map(function(p){return card(p, P.indexOf(p))}).join(""):'<div class="empty" style="grid-column:1/-1">No results. Try another word or code (e.g., 01, hoodie).</div>';
- show("results", true);
-});
 
 function toggleTheme(){
  var dk=document.documentElement.dataset.theme=="dark";
