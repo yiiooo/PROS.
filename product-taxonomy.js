@@ -82,7 +82,7 @@ document.addEventListener("change",function(e){
 document.addEventListener("click",function(e){
  var s=e.target.closest("[data-pros-style]");if(s){goStyle(s.dataset.prosStyle);return}
  if(e.target.closest("[data-pros-viewall-styles]")){var x=document.getElementById("prosAllStyles");if(x)x.hidden=!x.hidden;return}
- var nav=e.target.closest('[data-go="styles"]');if(nav){styleView()}
+ var nav=e.target.closest('[data-go="styles"]');if(nav){styleView();var sv=document.getElementById("prosStylesView");if(sv){document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("on",x===sv)});window.scrollTo(0,0)}}
 });
 
 var shopState={category:"All",style:"",fit:"",occasion:"",gender:"",size:"",color:"",brand:"",material:"",min:"",max:"",query:""};
@@ -100,5 +100,6 @@ function boot(){
 window.prosTaxonomyAttach=attach;
 window.prosTaxonomyBuild=build;
 window.prosTaxonomyState=state;
+window.prosTaxonomyRefresh=function(){shopView();styleView();var home=document.getElementById("home"),section=home&&home.querySelector(".pros-style-discovery");if(section)section.outerHTML=stylesPage()};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 })();
