@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-var MAX=12, undoStack=[], redoStack=[], beforeAction=null, typingBefore=null, typingTimer=null, busy=false;
+var MAX=12, undoStack=[], redoStack=[], beforeAction=null, typingBefore=null, typingTimer=null, busy=false, pendingAsync=false;
 function data(){try{return window.W?JSON.stringify(window.W):null}catch(e){return null}}
 function setData(json){
  if(!json)return;
@@ -15,7 +15,7 @@ function push(before,after){
  undoStack.push(before);if(undoStack.length>MAX)undoStack.shift();
  redoStack=[];update();
 }
-function capture(){if(!busy)beforeAction=data()}
+function capture(){if(!busy&&!beforeAction)beforeAction=data()}
 function commit(){
  if(busy)return;
  var after=data();
@@ -54,16 +54,37 @@ function install(){
  var ad=document.getElementById("ad");
  if(ad&&!ad.dataset.prosUndoBound){
   ad.dataset.prosUndoBound="1";
-  ad.addEventListener("click",function(){capture();setTimeout(commit,0);},true);
+  ad.addEventListener("focusin",function(e){
+   if(e.target&&e.target.matches("input,textarea,select,[contenteditable=true]"))capture();
+  },true);
+  ad.addEventListener("click",function(e){
+   if(e.target&&e.target.closest("#prosUndoToolbar"))return;
+   capture();
+   if(e.target&&e.target.closest("button,[data-ar],[data-rmcol],[data-rmbuylink],[data-remove-color-variant]"))setTimeout(commit,0);
+  },true);
   ad.addEventListener("change",function(e){
-   if(e.target&&e.target.type==="file"){capture();return;}
-   capture();setTimeout(commit,0);
+   if(e.target&&e.target.type==="file"){capture();pendingAsync=true;return;}
+   if(!beforeAction)capture();
+   setTimeout(commit,0);
   },true);
   ad.addEventListener("input",function(){
+   if(!typingBefore)typingBefore=beforeAction||data();
    if(typingTimer)clearTimeout(typingTimer);
-   if(!typingBefore)typingBefore=data();
-   typingTimer=setTimeout(function(){push(typingBefore,data());typingBefore=null;typingTimer=null;},650);
+   typingTimer=setTimeout(function(){
+    push(typingBefore,data());typingBefore=null;typingTimer=null;
+    if(beforeAction)beforeAction=null;
+   },650);
   },true);
+  if(typeof window.renderAd==="function"&&!window.renderAd.__prosUndoWrapped){
+   var originalRenderAd=window.renderAd;
+   var wrappedRenderAd=function(){
+    var result=originalRenderAd.apply(this,arguments);
+    if(pendingAsync){pendingAsync=false;setTimeout(commit,0);}
+    return result;
+   };
+   wrappedRenderAd.__prosUndoWrapped=true;
+   window.renderAd=wrappedRenderAd;
+  }
  }
  update();
 }
@@ -73,7 +94,7 @@ window.prosUndoCommit=function(){
  if(typingBefore){push(typingBefore,data());typingBefore=null;}
  commit();
 };
-window.prosUndoReset=function(){undoStack=[];redoStack=[];beforeAction=null;typingBefore=null;if(typingTimer)clearTimeout(typingTimer);typingTimer=null;update();};
+window.prosUndoReset=function(){undoStack=[];redoStack=[];beforeAction=null;typingBefore=null;pendingAsync=false;if(typingTimer)clearTimeout(typingTimer);typingTimer=null;update();};
 document.addEventListener("keydown",function(e){
  if(!(e.ctrlKey||e.metaKey)||e.altKey)return;
  var ad=document.getElementById("ad");if(!ad||!ad.classList.contains("on"))return;
