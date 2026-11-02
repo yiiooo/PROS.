@@ -1820,7 +1820,8 @@ async function saveChangesToStorage(){
   var collections=(W.collections||[]).map(function(c){return {id:c.id,name:c.name||"",description:c.desc||"",src:c.src||"",product_ids:c.productIds||[]};});
   var pr=await sb.from("products").upsert(products,{onConflict:"id"}); if(pr.error)throw pr.error;
   var cr=await sb.from("collections").upsert(collections,{onConflict:"id"}); if(cr.error)throw cr.error;
-  var settingKeys=["banner","heroBanner","catImages","social","gv","gp","ev","aboutPhotos","meta","productColorVariants"];
+  W.productInformation=window.prosProductInformationBuild?window.prosProductInformationBuild(W.products):{};
+  var settingKeys=["banner","heroBanner","catImages","social","gv","gp","ev","aboutPhotos","meta","productColorVariants","productInformation"];
   var settings=settingKeys.filter(function(k){return Object.prototype.hasOwnProperty.call(W,k);}).map(function(k){return {key:k,value:W[k]};});
   if(settings.length){var sr=await sb.from("site_settings").upsert(settings,{onConflict:"key"});if(sr.error)throw sr.error;}
   // Remove rows deleted in the admin panel, but only after successful upserts.
@@ -2033,8 +2034,10 @@ document.addEventListener("click", function(e){
         ev: settings.ev || (DB && DB.ev) || [],
         aboutPhotos: settings.aboutPhotos || (DB && DB.aboutPhotos) || {},
         meta: settings.meta || (DB && DB.meta) || {},
-        productColorVariants: settings.productColorVariants || (DB && DB.productColorVariants) || {}
+        productColorVariants: settings.productColorVariants || (DB && DB.productColorVariants) || {},
+        productInformation: settings.productInformation || (DB && DB.productInformation) || {}
       };
+      if(window.prosProductInformationAttach)window.prosProductInformationAttach(next.productInformation,next.products);
       if (settings.meta && typeof settings.meta === "object") {
         Object.keys(settings.meta).forEach(function (key) {
           if (!Object.prototype.hasOwnProperty.call(next, key)) next[key] = settings.meta[key];
