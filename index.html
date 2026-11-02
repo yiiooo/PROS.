@@ -707,7 +707,7 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
  <h2>Best Sellers</h2><div class="grid" id="best"></div>
 </section>
 <section class="view" id="category">
- <div class="category-head"><button class="page-back" type="button" data-back><span aria-hidden="true">←</span> Kembali</button><h2>Category</h2></div>
+ <div class="category-head"><h2>Category</h2></div>
  <div id="azbar"></div>
  <div class="chips" id="catchips"></div>
  <div class="chips" id="stychips"></div>
@@ -1003,7 +1003,7 @@ function show(v, restoreScroll){
  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
- var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="category");
+ var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home");
  $("sr").style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
 
  if(v=="detail"){
@@ -1151,8 +1151,8 @@ var ic={
 };
 var lb={home:"Home",category:"Category",collection:"Collections",cart:"Cart",about:"About"};
 $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+'" aria-label="'+lb[k]+'"><svg viewBox="0 0 24 24">'+ic[k]+'</svg><span>'+lb[k]+'</span>'+(k=="cart"?'<b class="dot" id="dot"></b>':'')+'</button>'}).join("");
- var prosBack=document.createElement("button");prosBack.id="prosGlobalBack";prosBack.type="button";prosBack.dataset.prosGlobalBack="";prosBack.setAttribute("aria-label","Kembali ke halaman sebelumnya");prosBack.innerHTML='<span aria-hidden="true">←</span> Kembali';prosBack.hidden=true;document.body.appendChild(prosBack);
- var prosBackCss=document.createElement("style");prosBackCss.textContent='#prosGlobalBack{position:fixed;left:14px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:1200;display:flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid var(--ln);border-radius:999px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 13px Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;backdrop-filter:blur(8px)}#prosGlobalBack[hidden]{display:none}@media(min-width:900px){#prosGlobalBack{bottom:22px;left:22px}}#prosGlobalBack span{font-size:19px;line-height:12px}';document.head.appendChild(prosBackCss);
+ var prosBack=document.createElement("button");prosBack.id="prosGlobalBack";prosBack.type="button";prosBack.dataset.prosGlobalBack="";prosBack.setAttribute("aria-label","Kembali ke halaman sebelumnya");prosBack.innerHTML='<span aria-hidden="true">‹</span>';prosBack.hidden=true;document.body.appendChild(prosBack);
+ var prosBackCss=document.createElement("style");prosBackCss.textContent='#prosGlobalBack{position:fixed;top:calc(92px + env(safe-area-inset-top));right:14px;z-index:1200;width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;backdrop-filter:blur(8px)}#prosGlobalBack[hidden]{display:none}@media(min-width:900px){#prosGlobalBack{top:22px;right:22px}}#prosGlobalBack span{font-size:34px;line-height:1}';document.head.appendChild(prosBackCss);
 
 document.addEventListener("click",function(e){if(swd){swd=false;return}
  if(e.target.classList&&e.target.classList.contains("sheet")){closeSheet(e.target);return}
