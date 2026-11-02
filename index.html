@@ -999,6 +999,7 @@ function show(v, restoreScroll){
  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
+ var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home");
  $("sr").style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
 
  if(v=="detail"){
@@ -1146,10 +1147,12 @@ var ic={
 };
 var lb={home:"Home",category:"Category",collection:"Collections",cart:"Cart",about:"About"};
 $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+'" aria-label="'+lb[k]+'"><svg viewBox="0 0 24 24">'+ic[k]+'</svg><span>'+lb[k]+'</span>'+(k=="cart"?'<b class="dot" id="dot"></b>':'')+'</button>'}).join("");
+ var prosBack=document.createElement("button");prosBack.id="prosGlobalBack";prosBack.type="button";prosBack.dataset.prosGlobalBack="";prosBack.setAttribute("aria-label","Kembali ke halaman sebelumnya");prosBack.innerHTML='<span aria-hidden="true">←</span> Kembali';prosBack.hidden=true;document.body.appendChild(prosBack);
+ var prosBackCss=document.createElement("style");prosBackCss.textContent='#prosGlobalBack{position:fixed;left:14px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:1200;display:flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid var(--ln);border-radius:999px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 13px Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;backdrop-filter:blur(8px)}#prosGlobalBack[hidden]{display:none}@media(min-width:900px){#prosGlobalBack{bottom:22px;left:22px}}#prosGlobalBack span{font-size:19px;line-height:12px}';document.head.appendChild(prosBackCss);
 
 document.addEventListener("click",function(e){if(swd){swd=false;return}
  if(e.target.classList&&e.target.classList.contains("sheet")){closeSheet(e.target);return}
- var t=e.target.closest("[data-go],[data-cat],[data-sty],[data-pr],[data-add],[data-buy],[data-rm],[data-open],[data-back],[data-zoom],[data-th],[data-vid],[data-close],[data-lt],[data-azt],[data-azs],[data-mark],[data-gocol],[data-colzoom],[data-color-variant]");if(!t)return;var d=t.dataset;
+ var t=e.target.closest("[data-go],[data-cat],[data-sty],[data-pr],[data-add],[data-buy],[data-rm],[data-open],[data-back],[data-pros-global-back],[data-zoom],[data-th],[data-vid],[data-close],[data-lt],[data-azt],[data-azs],[data-mark],[data-gocol],[data-colzoom],[data-color-variant]");if(!t)return;var d=t.dataset;
  if(d.go!==undefined){if($("menuSheet").classList.contains("on"))closeSheet($("menuSheet"));prosPushHistory(d.go,null);if(d.go=="collection")renderCollections();show(d.go, true)}
  else if(d.gocol!==undefined){prosPushHistory("collection",null);renderCollections();show("collection", true)}
  else if(d.colzoom!==undefined){openColZoom(d.colzoom)}
@@ -1161,7 +1164,7 @@ document.addEventListener("click",function(e){if(swd){swd=false;return}
  else if(d.pr!==undefined){st.priceRange=d.pr;renderCat()}
  else if(d.add){if(cart.indexOf(+d.add)<0)cart.push(+d.add);renderCart();if(t.classList.contains("ic")){t.innerHTML=CK}else{t.textContent="✓";t.style.fontSize="22px"}}
  else if(d.open){prosPushHistory("detail",+d.open);open_(+d.open)}
- else if(d.back!==undefined){if(history.state&&history.state.prosNav&&history.length>1)history.back();else show(st.prev||"home", true)}
+ else if(d.prosGlobalBack!==undefined||d.back!==undefined){if(history.state&&history.state.prosNav&&history.state.view!=="home"&&history.length>1)history.back();else show("home",true)}
  else if(d.buy){openBuy(+d.buy)}
  else if(d.mark!==undefined){var mi2=bought.indexOf(+d.mark);if(mi2>-1)bought.splice(mi2,1);else bought.push(+d.mark);renderCart()}
  else if(d.rm!==undefined){var ci=cart.indexOf(+d.rm);if(ci>-1)cart.splice(ci,1);var bi=bought.indexOf(+d.rm);if(bi>-1)bought.splice(bi,1);renderCart()}
