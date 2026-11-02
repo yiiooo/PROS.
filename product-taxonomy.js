@@ -96,7 +96,7 @@ function shopIcon(name){
  "T-Shirts":'<path d="M7 4 3 7l2 5 3-2v10h8V10l3 2 2-5-4-3-3 2h-4L7 4Z"/>',
  "Hoodies & Sweaters":'<path d="M8 4 5 6 3 11l3 2 2-3v10h8V10l2 3 3-2-2-5-3-2-3 2h-2L8 4Z"/><path d="M9 4v4h6V4"/>',
  "Jackets":'<path d="M8 4 5 6 3 11l3 2 2-3v10h8V10l2 3 3-2-2-5-3-2-3 2h-2L8 4Z"/><path d="M12 6v14M9 10h.01M15 10h.01"/>',
- "Shirts":'<path d="m8 4 4 3 4-3 4 3-2 5-3-2v10H9V10l-3 2-2-5 4-3Z"/>',
+ "Shirts":'<path d="M8 3 12 7 16 3 21 7 18 13 15.5 11.5V21H8.5V11.5L6 13 3 7 8 3Z"/><path d="M10 5.2 12 7l2-1.8M12 7v3"/>',
  "Pants":'<path d="M6 4h12l-1 16h-5l-1-9-1 9H5L6 4Z"/><path d="M6 8h12"/>',
  "Shorts":'<path d="M6 4h12l-1 10h-5l-1-5-1 5H5L6 4Z"/><path d="M6 8h12"/>',
  "Shoes":'<path d="M4 14c2 0 4-2 5-5l3 3 5 2c2 1 3 2 3 4v2H4v-6Z"/><path d="M8 17h.01M12 17h.01M16 17h.01"/>',
