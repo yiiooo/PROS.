@@ -116,13 +116,31 @@ document.addEventListener("click",function(e){var c=e.target.closest("[data-pros
 document.addEventListener("change",function(e){if(e.target.matches("[data-pros-shop-field]")){shopState[e.target.dataset.prosShopField]=e.target.value;shopView();var f=document.getElementById("prosShopFilters");if(f)f.hidden=false}});
 document.addEventListener("input",function(e){if(e.target.matches("[data-pros-shop-search]")){shopState.query=e.target.value;shopView();var x=document.querySelector("[data-pros-shop-search]");if(x){x.focus();x.setSelectionRange(x.value.length,x.value.length)}}});
 
+
+function renderHomeCategoryStrip(){
+ var home=document.getElementById("home");if(!home)return;
+ var anchor=home.querySelector(".trust");if(!anchor)return;
+ var counts={};(window.P||[]).forEach(function(p){productTax(p).categories.forEach(function(c){counts[c]=(counts[c]||0)+1})});
+ var section=document.getElementById("prosHomeCategoryStrip");
+ if(!section){section=document.createElement("section");section.id="prosHomeCategoryStrip";section.className="pros-home-category-strip";anchor.insertAdjacentElement("afterend",section)}
+ section.innerHTML='<div class="pros-home-cat-head"><div><small>DISCOVER PROS</small><h2>Shop by Category</h2><p>Find the pieces that match your style.</p></div><button type="button" class="pros-home-cat-all" data-pros-home-category="All">View all <span>↗</span></button></div><div class="pros-home-cat-rail" aria-label="Browse product categories">'+state.categories.map(function(c){return '<button type="button" class="pros-home-cat-card" data-pros-home-category="'+esc(c)+'"><span class="pros-home-cat-icon">'+shopIcon(c)+'</span><span class="pros-home-cat-name">'+esc(c)+'</span><small>'+(counts[c]||0)+' products</small></button>'}).join("")+'</div>';
+ if(!document.getElementById("prosHomeCategoryCss")){
+  var css=document.createElement("style");css.id="prosHomeCategoryCss";css.textContent='.pros-home-category-strip{padding:24px 0 18px;min-width:0}.pros-home-cat-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}.pros-home-cat-head small{font-size:10px;letter-spacing:.18em;color:var(--mu)}.pros-home-cat-head h2{font-size:clamp(21px,3vw,28px);margin:5px 0}.pros-home-cat-head p{font-size:13px;color:var(--mu)}.pros-home-cat-all{border:0;background:none;color:var(--tx);font:600 12px Inter,sans-serif;white-space:nowrap;padding:8px 0;cursor:pointer}.pros-home-cat-all span{margin-left:5px}.pros-home-cat-rail{display:flex;gap:11px;overflow-x:auto;overflow-y:hidden;padding:3px 2px 12px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--sage) transparent}.pros-home-cat-card{flex:0 0 124px;min-height:122px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;padding:13px;border:1px solid var(--ln);border-radius:12px;background:var(--sf);color:var(--tx);text-align:left;cursor:pointer;scroll-snap-align:start}.pros-home-cat-card:active{transform:scale(.98)}.pros-home-cat-icon{width:32px;height:32px;display:grid;place-items:center;color:var(--mu)}.pros-home-cat-icon svg{width:100%;height:100%}.pros-home-cat-name{font-size:12px;font-weight:700;line-height:1.25}.pros-home-cat-card small{font-size:10px;color:var(--mu)}@media(min-width:900px){.pros-home-cat-rail{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));overflow:visible}.pros-home-cat-card{width:100%;min-width:0;min-height:116px}}@media(prefers-reduced-motion:reduce){.pros-home-cat-card{transition:none!important}}';document.head.appendChild(css);
+ }
+}
+document.addEventListener("click",function(e){
+ var b=e.target.closest("[data-pros-home-category]");if(!b)return;
+ shopState.category=b.dataset.prosHomeCategory||"All";shopState.style="";shopState.fit="";shopState.occasion="";shopState.gender="";shopState.min="";shopState.max="";shopState.query="";
+ shopView();var v=document.getElementById("prosShopView");if(v){document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("on",x===v)});window.scrollTo(0,0)}
+});
+
 function boot(){
- addStylesUI();installAdmin();installShop();styleView();
+ addStylesUI();installAdmin();installShop();renderHomeCategoryStrip();styleView();
  if(typeof window.renderAd==="function"){var old=window.renderAd; if(!old.__prosTax)installAdmin()}
 }
 window.prosTaxonomyAttach=attach;
 window.prosTaxonomyBuild=build;
 window.prosTaxonomyState=state;
-window.prosTaxonomyRefresh=function(){shopView();styleView();var home=document.getElementById("home"),section=home&&home.querySelector(".pros-style-discovery");if(section)section.outerHTML=stylesPage()};
+window.prosTaxonomyRefresh=function(){shopView();renderHomeCategoryStrip();styleView();var home=document.getElementById("home"),section=home&&home.querySelector(".pros-style-discovery");if(section)section.outerHTML=stylesPage()};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 })();
