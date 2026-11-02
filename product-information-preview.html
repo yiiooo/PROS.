@@ -47,13 +47,97 @@
 <div class="admin-section"><h3>Product Description</h3><textarea style="width:100%;min-height:90px;padding:10px;border:1px solid #ddd;border-radius:8px">Write a clear product description. Paragraph breaks will be preserved.</textarea></div>
 <div id="adminSections"></div>
 <div class="admin-section"><h3>Image order</h3><p class="note">Image upload, paste, drag-and-drop and hold-to-reorder will be implemented in the next integration stage.</p><div class="field"><input value="Image 1 — Main photo"><input value="Image 2 — Back view"><button>↕</button></div></div>
-<div class="admin-section"><h3>Undo / Redo</h3><button class="btn">↶ Undo</button> <button class="btn">↷ Redo</button><p class="note">History controls are shown here as a design target; behavior is part of the implementation stage.</p></div>
+<div class="admin-section"><h3>Undo / Redo</h3><button class="btn" id="undoBtn" type="button" disabled>↶ Undo</button> <button class="btn" id="redoBtn" type="button" disabled>↷ Redo</button><p class="note" id="historyStatus" aria-live="polite">No changes to undo or redo.</p></div>
 </section>
 </main>
 <script>
 const sections=[["Style",[["Style","Streetwear"],["Pattern","Graphic print"],["Occasion","Casual, everyday wear"]]],["Item Details",[["Brand","PROS"],["Department","Unisex"],["Item Type","T-Shirt"]]],["Features & Specs",[["Fit Type","Oversized Fit"],["Sleeve Length","Short Sleeve"],["Neck Style","Crew Neck"]]],["Materials & Care",[["Material Type","Cotton"],["Fabric Type","Soft breathable fabric"],["Care Instructions","Machine wash cold"]]],["Measurements",[["Item Length","Standard length"],["Unit Count","1 count"],["Garment Size Country","United States"]]]];
 const adminSections=document.getElementById("adminSections");
-sections.forEach(([name,fields])=>{const box=document.createElement("div");box.className="admin-section";box.innerHTML="<h3>"+name+"</h3>"+fields.map(([k,v])=>'<div class="field"><input aria-label="Field name" value="'+k+'"><input aria-label="Field value" value="'+v+'"><button type="button" class="remove">×</button></div>').join("")+'<button type="button" class="btn add">+ Add field</button>';box.querySelector(".add").onclick=()=>{const row=document.createElement("div");row.className="field";row.innerHTML='<input placeholder="Attribute name"><input placeholder="Value"><button type="button">×</button>';row.querySelector("button").onclick=()=>row.remove();box.insertBefore(row,box.querySelector(".add"));};box.querySelectorAll(".remove").forEach(b=>b.onclick=()=>b.parentElement.remove());adminSections.appendChild(box);});
+sections.forEach(([name,fields])=>{
+  const box=document.createElement("div");
+  box.className="admin-section";
+  const heading=document.createElement("h3"); heading.textContent=name; box.appendChild(heading);
+  fields.forEach(([k,v])=>{
+    const row=document.createElement("div"); row.className="field";
+    row.innerHTML='<input aria-label="Field name"><input aria-label="Field value"><button type="button" class="remove" aria-label="Remove field">×</button>';
+    row.querySelectorAll("input")[0].value=k; row.querySelectorAll("input")[1].value=v;
+    box.appendChild(row);
+  });
+  const add=document.createElement("button"); add.type="button"; add.className="btn add"; add.textContent="+ Add field"; box.appendChild(add);
+  adminSections.appendChild(box);
+});
+
+/* Undo / Redo history for all editable Product Information fields. */
+const undoBtn=document.getElementById("undoBtn");
+const redoBtn=document.getElementById("redoBtn");
+const historyStatus=document.getElementById("historyStatus");
+let undoStack=[], redoStack=[];
+function editorSnapshot(){
+  const clone=document.getElementById("admin").cloneNode(true);
+  clone.querySelectorAll("input").forEach((el,i)=>{
+    const live=document.querySelectorAll("#admin input")[i];
+    if(live) el.setAttribute("value",live.value); else el.setAttribute("value",el.value);
+  });
+  clone.querySelectorAll("textarea").forEach((el,i)=>{
+    const live=document.querySelectorAll("#admin textarea")[i];
+    el.textContent=live ? live.value : el.value;
+  });
+  return clone.innerHTML;
+}
+let lastSnapshot=editorSnapshot();
+function updateHistoryButtons(){
+  undoBtn.disabled=undoStack.length===0;
+  redoBtn.disabled=redoStack.length===0;
+  historyStatus.textContent=undoStack.length
+    ? "Undo available ("+undoStack.length+" step"+(undoStack.length===1?"":"s")+")"
+    : (redoStack.length ? "No more changes to undo." : "No changes to undo or redo.");
+}
+function recordEditorChange(){
+  const next=editorSnapshot();
+  if(next===lastSnapshot) return;
+  undoStack.push(lastSnapshot);
+  if(undoStack.length>100) undoStack.shift();
+  redoStack=[];
+  lastSnapshot=next;
+  updateHistoryButtons();
+}
+function restoreEditorSnapshot(snapshot){
+  document.getElementById("admin").innerHTML=snapshot;
+  lastSnapshot=editorSnapshot();
+  updateHistoryButtons();
+}
+document.getElementById("admin").addEventListener("input",()=>{
+  recordEditorChange();
+});
+document.getElementById("admin").addEventListener("change",()=>{
+  recordEditorChange();
+});
+document.getElementById("admin").addEventListener("click",event=>{
+  const add=event.target.closest(".add");
+  const remove=event.target.closest(".remove");
+  if(add){
+    const row=document.createElement("div"); row.className="field";
+    row.innerHTML='<input placeholder="Attribute name" aria-label="Field name"><input placeholder="Value" aria-label="Field value"><button type="button" class="remove" aria-label="Remove field">×</button>';
+    add.parentElement.insertBefore(row,add);
+    recordEditorChange();
+  } else if(remove){
+    const row=remove.closest(".field");
+    if(row){row.remove();recordEditorChange();}
+  }
+});
+undoBtn.addEventListener("click",()=>{
+  if(!undoStack.length) return;
+  redoStack.push(lastSnapshot);
+  const previous=undoStack.pop();
+  restoreEditorSnapshot(previous);
+});
+redoBtn.addEventListener("click",()=>{
+  if(!redoStack.length) return;
+  undoStack.push(lastSnapshot);
+  const next=redoStack.pop();
+  restoreEditorSnapshot(next);
+});
+updateHistoryButtons();
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.target).scrollIntoView({behavior:"smooth",block:"start"});});
 document.getElementById("storeBtn").onclick=()=>{document.getElementById("store").style.display="block";document.getElementById("admin").classList.remove("show");document.getElementById("storeBtn").classList.add("active");document.getElementById("adminBtn").classList.remove("active");};
 document.getElementById("adminBtn").onclick=()=>{document.getElementById("store").style.display="none";document.getElementById("admin").classList.add("show");document.getElementById("adminBtn").classList.add("active");document.getElementById("storeBtn").classList.remove("active");};
