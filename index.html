@@ -178,7 +178,7 @@ h2{font-size:22px;font-weight:700;letter-spacing:-.2px;margin:22px 0 10px}
 
 /* detail */
 .dh{display:flex;align-items:center;gap:14px;margin:8px 0}
-.category-head{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:8px 0 14px}.category-head h2{margin:0;padding:0}.page-back{display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border:1px solid var(--ln);border-radius:999px;background:#211F1D;color:#F0EAE0;font:600 14px inherit;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.18)}.page-back span{font-size:20px;line-height:1}
+.category-head{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin:8px 0 18px}.category-head h2{margin:0;padding:0}.category-kicker{display:flex;align-items:center;gap:12px;min-height:46px}.category-kicker>span{font-size:12px;letter-spacing:.22em;color:var(--mu);font-weight:600}.category-back{width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.22);cursor:pointer}.page-back{display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border:1px solid var(--ln);border-radius:999px;background:#211F1D;color:#F0EAE0;font:600 14px inherit;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.18)}.page-back span{font-size:20px;line-height:1}
 .back{width:44px;height:44px;border-radius:6px;background:#E4DDD0;font-size:24px;color:var(--mu)}
 .pd{display:grid;gap:18px;min-width:0}.pd>div,.pd .info,.pd details,.pd .detail-copy{min-width:0;max-width:100%;box-sizing:border-box}
 .gal2{display:grid;grid-template-columns:minmax(0,1fr) 76px;gap:10px}
@@ -707,7 +707,7 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
  <h2>Best Sellers</h2><div class="grid" id="best"></div>
 </section>
 <section class="view" id="category">
- <div class="category-head"><h2>Category</h2></div>
+ <div class="category-head"><div class="category-kicker"><button class="category-back" type="button" data-back aria-label="Kembali ke halaman sebelumnya">‹</button><span>SHOP PROS</span></div><h2>ALL CATEGORIES</h2></div>
  <div id="azbar"></div>
  <div class="chips" id="catchips"></div>
  <div class="chips" id="stychips"></div>
@@ -1003,7 +1003,7 @@ function show(v, restoreScroll){
  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
- var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail");
+ var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail"||v==="category");
  $("sr").style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
 
  if(v=="detail"){
