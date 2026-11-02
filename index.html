@@ -1165,7 +1165,7 @@ $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+
 
 document.addEventListener("click",function(e){if(swd){swd=false;return}
  if(e.target.classList&&e.target.classList.contains("sheet")){closeSheet(e.target);return}
- var t=e.target.closest("[data-go],[data-cat],[data-sty],[data-pr],[data-add],[data-buy],[data-rm],[data-open],[data-back],[data-pros-global-back],[data-zoom],[data-th],[data-vid],[data-close],[data-lt],[data-azt],[data-azs],[data-mark],[data-gocol],[data-colzoom],[data-color-variant]");if(!t)return;var d=t.dataset;
+ var t=e.target.closest("[data-go],[data-cat],[data-category-reset],[data-sty],[data-pr],[data-add],[data-buy],[data-rm],[data-open],[data-back],[data-pros-global-back],[data-zoom],[data-th],[data-vid],[data-close],[data-lt],[data-azt],[data-azs],[data-mark],[data-gocol],[data-colzoom],[data-color-variant]");if(!t)return;var d=t.dataset;
  if(d.go!==undefined){if($("menuSheet").classList.contains("on"))closeSheet($("menuSheet"));prosPushHistory(d.go,null);if(d.go=="collection")renderCollections();show(d.go, true)}
  else if(d.gocol!==undefined){prosPushHistory("collection",null);renderCollections();show("collection", true)}
  else if(d.colzoom!==undefined){openColZoom(d.colzoom)}
