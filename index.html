@@ -1069,8 +1069,7 @@ function open_(i){st.pid=i;st.img=0;if(cur!="detail")st.prev=cur;var p=gp(i);if(
  det("Top highlight",p.hl||"Thick and comfortable fabric, with a cut that suits the "+p.sty+" style, perfect for everyday urban outfits.")+
  det("Product description",p.desc||"Product description has not been added yet.")+
  det("Size guide",p.size||"Sizes S to XL. Check the size chart on the seller page before buying.")+
- det("Product specifications",p.spec||"Category: "+p.cat+". Style: "+p.sty+(p.tone?". Color: "+p.tone:"")+".")+
- '<div class="pdl" style="margin-top:14px">Product Videos</div>'+ (vs.length?'<div class="vids">'+vs.map(function(v,n){return '<button class="vid" data-vid="'+n+'" aria-label="Play product video '+(n+1)+'"><video class="vid-preview" data-video-preview src="'+esc(v)+'" muted playsinline preload="metadata"></video><span class="vid-play"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></button>'}).join('')+'</div>':'<div class="mu" style="font-size:12px;margin:8px 0">No product video uploaded yet.</div>')+
+  '<div class="pdl" style="margin-top:14px">Product Videos</div>'+ (vs.length?'<div class="vids">'+vs.map(function(v,n){return '<button class="vid" data-vid="'+n+'" aria-label="Play product video '+(n+1)+'"><video class="vid-preview" data-video-preview src="'+esc(v)+'" muted playsinline preload="metadata"></video><span class="vid-play"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></button>'}).join('')+'</div>':'<div class="mu" style="font-size:12px;margin:8px 0">No product video uploaded yet.</div>')+
  '<div class="bar"><button class="bn" data-buy="'+i+'">Buy Now</button><button class="bc" data-add="'+i+'" aria-label="Add to Cart"><svg viewBox="0 0 24 24"><rect x="5" y="9" width="14" height="11" rx="3"/><path d="M9 9V7a3 3 0 016 0v2"/></svg></button></div></div></div>'+
  '<section class="detail-explore"><h2>Explore '+esc(p.cat)+'</h2>'+(rel.length?'<div class="grid">'+rel.map(function(x){return card(x, P.indexOf(x))}).join("")+'</div>':'<div class="empty">No other products in this category yet.</div>')+
  '<button class="explore-all" data-cat="'+esc(p.cat)+'"><span>All '+esc(p.cat)+'</span><span aria-hidden="true">↗</span></button></section>';
@@ -1504,14 +1503,12 @@ function renderAd(){
      '<label class="fl">Price display</label><select data-f="'+b+'priceUI"><option value="1"'+(p.priceUI!="2"?' selected':'')+'>UI 1 - Simple text</option><option value="2"'+(p.priceUI=="2"?' selected':'')+'>UI 2 - Rounded label</option></select>'+
      '<label class="fl">Category</label><select data-f="'+b+'cat" data-re>'+CN.map(function(c){return '<option'+(c==p.cat?' selected':'')+'>'+c+'</option>'}).join("")+'</select>'+
      '<label class="fl">Style</label><select data-f="'+b+'sty">'+CATS[p.cat].map(function(c){return '<option'+(c==p.sty?' selected':'')+'>'+c+'</option>'}).join("")+'</select>'+
-     fld("Color",b+"tone")+
      colorVariantAdminHtml(p,A.pi)+
      buyLinksHtml+
      chk("New release",b+"isNew")+
      chk("Best seller",b+"best")+
      '<label class="fl">Top highlight</label><p class="mu" style="font-size:12px;margin:-6px 0 8px">Format important words with bold, italic, underline, or lists.</p>'+richDescriptionEditor(b+"hl",p.hl||"")+
      '<label class="fl">Size guide</label><p class="mu" style="font-size:12px;margin:-6px 0 8px">Edit the table like a spreadsheet. Press + Add size row to add a size at the bottom (XS, S, M, L, XL, XXL, XXXL, and so on are suggested automatically). The first row contains column names (Size, Chest, Length, etc.); the following rows contain sizes and values. Swipe horizontally to view all columns.</p>'+sizeEditorHtml(p,b)+
-     '<label class="fl">Product specifications</label><p class="mu" style="font-size:12px;margin:-6px 0 8px">Format specification labels and values separately.</p>'+richDescriptionEditor(b+"spec",p.spec||"")+
      '<label class="fl">Description</label><p class="mu" style="font-size:12px;margin:-6px 0 8px">Format selected text as bold, italic, underline, or lists.</p>'+richDescriptionEditor(b+"desc",p.desc||"")+
      '<h2>Photos / GIFs</h2><div class="pros-product-photo-zone" data-product-photo-zone="'+b+'imgs"><p class="mu" style="font-size:12px;margin:0 0 8px">Tambah foto dengan memilih file, paste gambar dari clipboard, atau drag & drop ke area ini. Seret thumbnail untuk mengubah urutan; foto pertama menjadi foto utama.</p>'+tl(b+"imgs")+upl(b+"imgs","image/*")+'</div>'+
      '<h2>Videos</h2>'+tl(b+"vids")+upl(b+"vids","video/*");
