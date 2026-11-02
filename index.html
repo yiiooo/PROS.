@@ -1003,7 +1003,7 @@ function show(v, restoreScroll){
  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
- var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home");
+ var backControl=document.getElementById("prosGlobalBack");if(backControl)backControl.hidden=(v==="home"||v==="detail");
  $("sr").style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
 
  if(v=="detail"){
@@ -1064,7 +1064,7 @@ function open_(i){st.pid=i;st.img=0;if(cur!="detail")st.prev=cur;var p=gp(i);if(
  // Tampilkan semua produk lain of kategori yang sama; halaman detail dapat di-scroll sampai CTA kategori.
  var rel=P.filter(function(x){return x.cat==p.cat&&x.id!=i}),vs=Array.isArray(p.vids)?p.vids:[],N=cnt(p),pPrice=p.price!==undefined?p.price:30;
  $("detail").innerHTML=''+
- '<div class="pd"><div><div class="gal2"><div class="mi" id="mi" data-zoom style="cursor:zoom-in;background:'+pic(p,0)+'"><span>'+ltr(p)+'</span><div class="dots">'+Array.from({length:N},function(_,k){return '<i'+(k?'':' class="on"')+'></i>'}).join("")+'</div><button class="zm" data-zoom aria-label="Zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg></button></div>'+
+ '<div class="pd"><button class="product-back" type="button" data-pros-global-back aria-label="Kembali ke halaman sebelumnya">‹</button><div><div class="gal2"><div class="mi" id="mi" data-zoom style="cursor:zoom-in;background:'+pic(p,0)+'"><span>'+ltr(p)+'</span><div class="dots">'+Array.from({length:N},function(_,k){return '<i'+(k?'':' class="on"')+'></i>'}).join("")+'</div><button class="zm" data-zoom aria-label="Zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg></button></div>'+
  '<div class="tb"><div class="tbi">'+Array.from({length:N},function(_,n){return '<button data-th="'+n+'" class="'+(n?'':'on')+'" style="background:'+pic(p,n)+'">'+ltr(p)+'</button>'}).join("")+'</div></div></div></div>'+
  '<div class="info"><div class="pt notranslate product-name-anton" translate="no">'+esc(p.name)+(p.tone?', '+esc(p.tone):'')+'</div>'+(priceOn(p)?priceHtml(p,"font-size:18px;margin-bottom:2px")+'<div class="price-note">(the price shown is $'+pPrice+' and is only an estimate; each marketplace may change its price at any time)</div>':'')+''+productColorHtml(p)+'<div class="pdl">Product Detail</div>'+
  det("Top highlight",p.hl||"Thick and comfortable fabric, with a cut that suits the "+p.sty+" style, perfect for everyday urban outfits.")+
@@ -1152,7 +1152,7 @@ var ic={
 var lb={home:"Home",category:"Category",collection:"Collections",cart:"Cart",about:"About"};
 $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+'" aria-label="'+lb[k]+'"><svg viewBox="0 0 24 24">'+ic[k]+'</svg><span>'+lb[k]+'</span>'+(k=="cart"?'<b class="dot" id="dot"></b>':'')+'</button>'}).join("");
  var prosBack=document.createElement("button");prosBack.id="prosGlobalBack";prosBack.type="button";prosBack.dataset.prosGlobalBack="";prosBack.setAttribute("aria-label","Kembali ke halaman sebelumnya");prosBack.innerHTML='<span aria-hidden="true">‹</span>';prosBack.hidden=true;document.body.appendChild(prosBack);
- var prosBackCss=document.createElement("style");prosBackCss.textContent='#prosGlobalBack{position:absolute;top:140px;left:14px;right:auto;z-index:1200;width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;backdrop-filter:blur(8px)}#prosGlobalBack[hidden]{display:none}@media(min-width:900px){#prosGlobalBack{top:140px;left:22px;right:auto}}#prosGlobalBack span{font-size:34px;line-height:1}';document.head.appendChild(prosBackCss);
+ var prosBackCss=document.createElement("style");prosBackCss.textContent='#prosGlobalBack{position:absolute;top:140px;left:14px;right:auto;z-index:1200;width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;backdrop-filter:blur(8px)}#prosGlobalBack[hidden]{display:none}@media(min-width:900px){#prosGlobalBack{top:140px;left:22px;right:auto}}#prosGlobalBack span{font-size:34px;line-height:1}.product-back{position:static;justify-self:start;align-self:start;margin:0 0 -8px 0;width:46px;height:46px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ln);border-radius:12px;background:rgba(30,28,26,.94);color:#F0EAE0;font:600 30px/1 Inter,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.28);cursor:pointer;grid-column:1/-1}';document.head.appendChild(prosBackCss);
 
 document.addEventListener("click",function(e){if(swd){swd=false;return}
  if(e.target.classList&&e.target.classList.contains("sheet")){closeSheet(e.target);return}
