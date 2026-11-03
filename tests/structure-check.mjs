@@ -67,6 +67,7 @@ assert.ok(!app.includes("async function saveChangesToStorage("), "Supabase persi
 assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase persistence module missing save function");
 assert.ok(!app.includes("function colorVariantAdminHtml("), "Color variant renderer should not be defined in app.js");
 assert.ok(!app.includes("function renderCat(") && catalogModule.includes("function renderCat("), "Catalog renderer extraction failed");
+assert.ok(!catalogModule.includes("var LEFT=") && catalogModule.includes("concat(CN).map(chip)"), "Category constants must resolve after app initialization");
 assert.ok(!app.includes("function open_(") && detailModule.includes("function open_("), "Product detail extraction failed");
 assert.ok(!app.includes("function renderHeroBanner(") && siteContentModule.includes("function renderHeroBanner("), "Site content extraction failed");
 assert.ok(!app.includes("function renderAd(") && dashboardModule.includes("function renderAd("), "Admin dashboard extraction failed");
