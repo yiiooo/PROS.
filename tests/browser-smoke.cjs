@@ -122,6 +122,7 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.waitForSelector("#ad.on", { state: "visible" });
     await page.locator('#adl [data-ae="0"]').click();
     await page.waitForSelector("#adc .pros-product-photo-zone", { state: "visible" });
+    const initialPhotoCount = await page.evaluate(() => window.W.products[0].imgs.length);
 
     await page.locator(".pros-product-photo-zone").evaluate(zone => {
       const raw = atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGP4DwQACfsD/fteaysAAAAASUVORK5CYII=");
@@ -146,10 +147,10 @@ async function testViewport(browser, label, viewport, mobile) {
     }));
     console.log("Crop diagnostics", label, JSON.stringify(cropDiagnostics));
     console.log("Page errors after crop", label, JSON.stringify(pageErrors));
-    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 20000 });
+    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === initialPhotoCount + 1, { timeout: 20000 });
     await page.waitForSelector("#prosUndo:not(:disabled)", { state: "visible" });
     await page.locator("#prosUndo").click();
-    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 0, { timeout: 10000 });
+    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === initialPhotoCount, { timeout: 10000 });
     await page.locator("#prosRedo").click();
     await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 10000 });
 
