@@ -53,11 +53,18 @@
   <div><svg viewBox="0 0 24 24"><path d="M2 6h11v9H2zM13 9h4l3 3v3h-7z"></path><circle cx="6" cy="17" r="1.6"></circle><circle cx="17" cy="17" r="1.6"></circle></svg><span><b>FAST DELIVERY</b>Quick &amp; safe delivery</span></div>
   <div><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6"></circle><path d="M9 10l2 2 3-4M9 15l-2 6 5-2 5 2-2-6"></path></svg><span><b>QUALITY ASSURED</b>Best fashion, best quality</span></div>
   <div><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 018 0v3"></path></svg><span><b>SECURE PAYMENT</b>100% secure checkout</span></div></div>
- <button class="all" id="allCatBtn" data-cat="All"><span>Explore All Categories</span><span>↗</span></button>
+ <button class="all" id="allCatBtn" data-categories-open><span>Explore All Categories</span><span>↗</span></button>
  <h2>Best Sellers</h2><div class="grid" id="best"></div>
 </section>
 <section class="view" id="category">
- <h2>Categories</h2>
+ <p class="category-eyebrow">SHOP PROS</p>
+ <h2>ALL CATEGORIES</h2>
+ <p class="category-intro">Choose a category to start exploring. Use filters when you need more specific results.</p>
+ <div class="category-overview-grid" id="categoryOverview"></div>
+</section>
+<section class="view" id="catalog">
+ <button class="category-back" data-categories-open aria-label="Back to all categories">← All Categories</button>
+ <h2 id="catalogHeading">All Products</h2>
  <div id="azbar"></div>
  <div class="chips" id="catchips"></div>
  <div class="chips" id="stychips"></div>
