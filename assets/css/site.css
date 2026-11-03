@@ -653,3 +653,19 @@ body :not(.ab2):not(.ab2 *):not(.ad):not(.ad *):not(.abar):not(.abar *):not(#cro
     max-width: 44px !important;
   }
 }
+
+
+/* Categories overview and selected-category catalogue */
+.category-eyebrow{font-family:"Special Elite",serif;letter-spacing:.22em;color:var(--mu);font-size:13px;margin:8px 0 28px}
+#category>h2{margin:0 0 12px;font-family:Anton,sans-serif;font-size:clamp(30px,7vw,44px);line-height:1.05}
+.category-intro{font-family:"Special Elite",serif;color:var(--mu);font-size:16px;line-height:1.35;margin:0 0 30px;max-width:760px}
+.category-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.category-tile{min-width:0;min-height:132px;padding:18px 8px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;color:var(--tx);cursor:pointer}
+.category-tile:active{transform:scale(.98)}
+.category-tile strong{font-family:"Special Elite",serif;font-size:14px;line-height:1.15}
+.category-tile small{font-family:"Special Elite",serif;color:var(--mu);font-size:12px}
+.category-icon{width:34px;height:34px;display:grid;place-items:center}
+.category-icon svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.category-icon svg.art{fill:currentColor;stroke:none}
+.category-back{margin:8px 0 18px;padding:10px 14px;border:1px solid var(--ln);border-radius:8px;background:var(--sf);color:var(--tx);font-family:"Special Elite",serif}
+@media(min-width:700px){.category-overview-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.category-tile{min-height:160px}.category-tile strong{font-size:17px}}

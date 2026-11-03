@@ -9,7 +9,10 @@ function addFiles(zone,files){
  if(!zone||!files||!files.length||!window.ADMIN||typeof window.doUp!=="function")return;
  var path=photoPath(zone);
  if(!path)return;
- var valid=Array.from(files).filter(function(f){return f&&f.type&&f.type.indexOf("image/")===0});
+ var incoming=Array.from(files);
+ var valid=incoming.filter(function(f){return f&&["image/jpeg","image/png","image/webp","image/gif"].indexOf(String(f.type||"").toLowerCase())>-1&&Number(f.size)<=20*1024*1024});
+ var rejected=incoming.length-valid.length;
+ if(rejected&&typeof window.toast==="function")window.toast(rejected+" file(s) ditolak. Gunakan JPG, PNG, WebP, atau GIF maksimal 20 MB.");
  if(!valid.length)return;
  if(window.prosUndoCapture)window.prosUndoCapture();
  pendingPhoto=true;
