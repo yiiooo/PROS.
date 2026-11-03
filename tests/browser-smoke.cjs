@@ -171,7 +171,7 @@ async function testViewport(browser, label, viewport, mobile) {
     });
     await page.locator("#alok").click();
     await page.waitForFunction(() => window.__prosSignOutCalls === 1 && document.getElementById("aler").textContent.includes("Simulated admin lookup failure"));
-    await page.evaluate(() => { window.prosSupabase = window.__prosOriginalSupabase; delete window.__prosOriginalSupabase; });
+    await page.evaluate(() => { window.prosSupabase = window.__prosOriginalSupabase; delete window.__prosOriginalSupabase; document.getElementById("al").classList.remove("on"); });
 
     // Exercise the admin photo drag/drop + crop + undo/redo path without changing production data.
     await page.evaluate(() => {
