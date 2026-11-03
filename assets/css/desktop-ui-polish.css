@@ -1,0 +1,22 @@
+
+/* Admin navigation: mouse/trackpad-friendly horizontal strip on desktop */
+@media (min-width: 900px){
+  .ad .tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:10px;padding:8px 8px 12px;margin:0 0 16px;scrollbar-width:thin;scrollbar-color:var(--mu) var(--sf);cursor:grab;scroll-behavior:smooth;overscroll-behavior-x:contain}
+  .ad .tabs:active{cursor:grabbing}
+  .ad .tabs::-webkit-scrollbar{height:7px;display:block}
+  .ad .tabs::-webkit-scrollbar-track{background:var(--sf);border-radius:8px}
+  .ad .tabs::-webkit-scrollbar-thumb{background:var(--mu);border-radius:8px}
+  .ad .tabs>.chip{flex:0 0 auto;white-space:nowrap}
+}
+/* Small feedback on interactive elements, without changing layout */
+@media (hover:hover) and (pointer:fine){
+  button,.chip,.cat,.card,.th{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
+  button:hover,.chip:hover{transform:translateY(-2px)}
+  .card:hover,.cat:hover{box-shadow:0 8px 22px #0002}
+  button:active,.chip:active{transform:translateY(0) scale(.98)}
+  .pros-cursor-glow{position:fixed;left:var(--pros-mx,-100px);top:var(--pros-my,-100px);width:180px;height:180px;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;z-index:9990;opacity:0;background:radial-gradient(circle,rgba(155,145,120,.10),rgba(155,145,120,0) 70%);transition:opacity .2s ease}
+  body.pros-pointer-active .pros-cursor-glow{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){
+  button,.chip,.cat,.card,.th,.pros-cursor-glow{transition:none!important}
+}
