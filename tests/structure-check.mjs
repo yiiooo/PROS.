@@ -10,6 +10,10 @@ assert.equal(inlineExecutableScripts.length, 0, "index.html should not contain e
 assert.ok(fs.existsSync("favicon.svg"), "Brand favicon must be present");
 const seedData = JSON.parse(fs.readFileSync("data.json", "utf8"));
 assert.ok(Array.isArray(seedData.products), "data.json must provide a products array");
+const headers = fs.readFileSync("_headers", "utf8");
+assert.ok(headers.includes("X-Content-Type-Options: nosniff"), "Security headers must include nosniff");
+assert.ok(headers.includes("X-Frame-Options: DENY"), "Security headers must prevent framing");
+assert.ok(headers.includes("Referrer-Policy:"), "Security headers must define a referrer policy");
 const localScriptPaths = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi)]
   .map(match => match[1])
   .filter(src => !/^https?:\/\//i.test(src) && !src.startsWith("//"));
