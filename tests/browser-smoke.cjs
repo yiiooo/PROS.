@@ -152,7 +152,7 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.locator("#prosUndo").click();
     await page.waitForFunction(count => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === count, initialPhotoCount, { timeout: 10000 });
     await page.locator("#prosRedo").click();
-    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 10000 });
+    await page.waitForFunction(count => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === count + 1, initialPhotoCount, { timeout: 10000 });
 
     fs.mkdirSync(artifactDir, { recursive: true });
     await page.screenshot({
