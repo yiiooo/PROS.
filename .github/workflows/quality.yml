@@ -27,6 +27,8 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done < <(find . -type f -name '*.js' -not -path './.git/*' -not -path './node_modules/*' -print0)
+      - name: Check browser smoke test syntax
+        run: node --check tests/browser-smoke.cjs
       - name: Check local assets and script order
         run: node tests/structure-check.mjs
 
