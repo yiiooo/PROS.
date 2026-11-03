@@ -113,9 +113,19 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.evaluate(id => {
       const product = window.DB.products.find(item => String(item.id) === String(id));
       product.info = { style: "Fit | Oversized\nStyle | Streetwear" };
+      product.desc = '<custom-wrapper><img src="x" onerror="window.__prosXss = 1"></custom-wrapper><script>window.__prosXss = 2</script>';
+      window.__prosXss = 0;
     }, productId);
     await productLink.click();
     await page.waitForSelector("#detail.on", { state: "visible" });
+    const unsafeMarkup = await page.evaluate(() => ({
+      scriptCount: document.querySelectorAll("#detail script").length,
+      eventHandlerCount: document.querySelectorAll("#detail [onerror], #detail [onload], #detail [onclick]").length,
+      injectedValue: window.__prosXss
+    }));
+    assert.equal(unsafeMarkup.scriptCount, 0, "Product description must not inject script elements");
+    assert.equal(unsafeMarkup.eventHandlerCount, 0, "Product description must strip event-handler attributes, including inside unsupported wrappers");
+    assert.equal(unsafeMarkup.injectedValue, 0, "Untrusted product description must not execute script or event handlers");
     await page.evaluate(() => {
       window.__prosCopiedText = "";
       Object.defineProperty(navigator, "clipboard", {
