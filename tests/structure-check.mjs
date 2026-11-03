@@ -49,6 +49,7 @@ for (const stylesheet of [
 
 const app = fs.readFileSync("assets/js/app.js", "utf8");
 const photoTools = fs.readFileSync("product-photo-tools.js", "utf8");
+const productInformation = fs.readFileSync("product-information.js", "utf8");
 const sizeModule = fs.readFileSync("assets/js/admin/size-guide.js", "utf8");
 const mediaModule = fs.readFileSync("assets/js/admin/media-manager.js", "utf8");
 const saveModule = fs.readFileSync("assets/js/integrations/supabase-save.js", "utf8");
@@ -67,6 +68,8 @@ assert.ok(mediaModule.includes("20*1024*1024") && mediaModule.includes("100*1024
 assert.ok(mediaModule.includes("reader.onerror") && mediaModule.includes("img.onerror"), "Media module missing read/decode error handling");
 assert.ok(photoTools.includes("image/webp") && photoTools.includes("20*1024*1024"), "Photo tools must validate files before opening undo state");
 assert.ok(app.includes("if(searchRow)"), "Optional search row must be null-safe");
+assert.ok(productInformation.includes("function panelPlainText(") && productInformation.includes("function copyPlainText("), "Product Information copy must generate plain text");
+assert.ok(productInformation.includes("data-pros-info-copy"), "Product Information panels must expose the copy control");
 assert.ok(!app.includes("async function saveChangesToStorage("), "Supabase persistence should not be defined in app.js");
 assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase persistence module missing save function");
 assert.ok(!app.includes("function colorVariantAdminHtml("), "Color variant renderer should not be defined in app.js");
