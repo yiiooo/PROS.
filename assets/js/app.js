@@ -282,21 +282,38 @@ $("alok").addEventListener("click",async function(){
  if(!window.prosSupabase){$("aler").textContent="Supabase is not ready. Reload the page.";return;}
  if(!email||!password){$("aler").textContent="Enter the admin email and password.";return;}
  var btn=$("alok");btn.disabled=true;btn.textContent="Checking...";
+ var signedIn=false;
  try{
   var auth=await window.prosSupabase.auth.signInWithPassword({email:email,password:password});
   if(auth.error)throw auth.error;
-  var user=auth.data.user;
+  signedIn=true;
+  var user=auth.data&&auth.data.user;
+  if(!user)throw new Error("Supabase did not return an authenticated user.");
   var check=await window.prosSupabase.from("admins").select("user_id").eq("user_id",user.id).maybeSingle();
   if(check.error)throw check.error;
-  if(!check.data){await window.prosSupabase.auth.signOut();throw new Error("This account is not registered as an admin in the admins table.");}
+  if(!check.data)throw new Error("This account is not registered as an admin in the admins table.");
   fails=0;ADMIN=true;$("al").classList.remove("on");$("alpw").value="";
   try{W=JSON.parse(JSON.stringify(DB));}catch(e){}
   openAd();
- }catch(e){fails++;$("aler").textContent=(e.message||"Sign-in failed.");if(fails>=5){$("aler").textContent+=" Make sure the email, password, and admin access are correct.";fails=0;}}
+ }catch(e){
+  if(signedIn){
+   ADMIN=false;W=null;$("ad").classList.remove("on");document.body.style.overflow="";
+   try{var cleanup=await window.prosSupabase.auth.signOut();if(cleanup&&cleanup.error)console.warn("PROS: failed to clear non-admin session",cleanup.error);}
+   catch(cleanupError){console.warn("PROS: failed to clear non-admin session",cleanupError);}
+  }
+  fails++;$("aler").textContent=(e.message||"Sign-in failed.");
+  if(fails>=5){$("aler").textContent+=" Make sure the email, password, and admin access are correct.";fails=0;}
+ }
  finally{btn.disabled=false;btn.textContent="Enter";}
 });
 
-$("adlo").addEventListener("click",async function(){ADMIN=false;W=null;if(window.prosSupabase){await window.prosSupabase.auth.signOut();}$("ad").classList.remove("on");document.body.style.overflow=""});
+$("adlo").addEventListener("click",async function(){
+ ADMIN=false;W=null;
+ try{
+  if(window.prosSupabase){var out=await window.prosSupabase.auth.signOut();if(out&&out.error)throw out.error;}
+ }catch(e){console.warn("PROS: Supabase sign-out failed",e);toast("Admin panel ditutup, tetapi sesi Supabase belum berhasil dihapus. Periksa koneksi lalu coba lagi.");}
+ finally{$("ad").classList.remove("on");document.body.style.overflow="";}
+});
 $("adsave").addEventListener("click",function(){saveChangesToStorage();});
 
 (function(){
