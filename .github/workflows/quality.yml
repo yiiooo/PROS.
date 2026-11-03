@@ -3,7 +3,7 @@ name: PROS Quality Checks
 on:
   push:
     branches:
-      - refactor/**
+      - main
   pull_request:
     branches:
       - main
