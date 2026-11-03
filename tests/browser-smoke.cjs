@@ -147,10 +147,10 @@ async function testViewport(browser, label, viewport, mobile) {
     }));
     console.log("Crop diagnostics", label, JSON.stringify(cropDiagnostics));
     console.log("Page errors after crop", label, JSON.stringify(pageErrors));
-    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === initialPhotoCount + 1, { timeout: 20000 });
+    await page.waitForFunction(count => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === count + 1, initialPhotoCount, { timeout: 20000 });
     await page.waitForSelector("#prosUndo:not(:disabled)", { state: "visible" });
     await page.locator("#prosUndo").click();
-    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === initialPhotoCount, { timeout: 10000 });
+    await page.waitForFunction(count => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === count, initialPhotoCount, { timeout: 10000 });
     await page.locator("#prosRedo").click();
     await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 10000 });
 
