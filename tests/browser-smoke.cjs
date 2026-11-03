@@ -140,6 +140,29 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.waitForSelector("#cart.on", { state: "visible" });
     assert.ok(await page.locator("#cartlist .item").count(), "Cart should contain the added product");
 
+    // A signed-in non-admin or failed admin lookup must not retain an authenticated session.
+    await page.evaluate(() => {
+      window.__prosOriginalSupabase = window.prosSupabase;
+      window.__prosSignOutCalls = 0;
+      window.prosSupabase = {
+        auth: {
+          signInWithPassword: async () => ({ data: { user: { id: "smoke-user" } }, error: null }),
+          signOut: async () => { window.__prosSignOutCalls += 1; return { error: null }; }
+        },
+        from: () => ({
+          select: () => ({
+            eq: () => ({ maybeSingle: async () => ({ data: null, error: new Error("Simulated admin lookup failure") }) })
+          })
+        })
+      };
+      window.openAL();
+      document.getElementById("alid").value = "smoke@example.invalid";
+      document.getElementById("alpw").value = "not-a-real-password";
+    });
+    await page.locator("#alok").click();
+    await page.waitForFunction(() => window.__prosSignOutCalls === 1 && document.getElementById("aler").textContent.includes("Simulated admin lookup failure"));
+    await page.evaluate(() => { window.prosSupabase = window.__prosOriginalSupabase; delete window.__prosOriginalSupabase; });
+
     // Exercise the admin photo drag/drop + crop + undo/redo path without changing production data.
     await page.evaluate(() => {
       window.ADMIN = true;
