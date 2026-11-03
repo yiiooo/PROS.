@@ -186,6 +186,10 @@ async function testViewport(browser, label, viewport, mobile) {
       fullPage: true
     });
 
+    const cspErrors = consoleErrors.filter(message => message.includes("Content Security Policy") || message.includes("Refused to"));
+    assert.deepEqual(cspErrors, [], "CSP violations: " + cspErrors.join(" | "));
+    const localHttpErrors = badResponses.filter(response => response.url.startsWith(baseUrl) && response.status >= 400);
+    assert.deepEqual(localHttpErrors, [], "Missing local assets: " + JSON.stringify(localHttpErrors));
     assert.deepEqual(pageErrors, [], "Uncaught browser errors: " + pageErrors.join(" | "));
     console.log("Browser smoke passed:", label);
   } finally {
