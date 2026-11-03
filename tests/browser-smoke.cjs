@@ -9,6 +9,11 @@ const artifactDir = process.env.PROS_ARTIFACT_DIR || "artifacts";
 
 function startStaticServer() {
   const root = process.cwd();
+  const securityHeaders = {};
+  for (const line of fs.readFileSync(path.join(root, "_headers"), "utf8").split(/\r?\n/)) {
+    const match = line.match(/^\s+([^:]+):\s*(.+)$/);
+    if (match) securityHeaders[match[1]] = match[2];
+  }
   const mime = {
     ".html": "text/html; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
@@ -35,7 +40,7 @@ function startStaticServer() {
     } catch {}
     fs.readFile(file, (error, data) => {
       if (error) { res.writeHead(404); res.end("Not found"); return; }
-      res.writeHead(200, { "Content-Type": mime[path.extname(file).toLowerCase()] || "application/octet-stream", "Cache-Control": "no-store" });
+      res.writeHead(200, { ...securityHeaders, "Content-Type": mime[path.extname(file).toLowerCase()] || "application/octet-stream", "Cache-Control": "no-store" });
       res.end(data);
     });
   });
