@@ -71,7 +71,9 @@ async function testViewport(browser, label, viewport, mobile) {
   page.setDefaultTimeout(15000);
   const pageErrors = [];
   const consoleErrors = [];
+  const badResponses = [];
   page.on("pageerror", error => pageErrors.push(error.message));
+  page.on("response", response => { if (response.status() >= 400) badResponses.push({ status: response.status(), url: response.url() }); });
   page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
 
   try {
@@ -88,6 +90,7 @@ async function testViewport(browser, label, viewport, mobile) {
     console.log("Browser diagnostics", label, JSON.stringify(diagnostics));
     console.log("Page errors", label, JSON.stringify(pageErrors));
     console.log("Console errors", label, JSON.stringify(consoleErrors));
+    console.log("HTTP error responses", label, JSON.stringify(badResponses));
     fs.mkdirSync(artifactDir, { recursive: true });
     await page.screenshot({ path: path.join(artifactDir, "pros-" + label + "-diagnostic.png"), fullPage: true });
     await page.waitForSelector("#home.on", { state: "visible", timeout: 30000 });
