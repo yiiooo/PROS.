@@ -41,8 +41,19 @@ function renderCollections(){
 
 function renderHome(){
  var homeCats=$("homecats");if(homeCats)homeCats.innerHTML="";
- var allBtn=$("allCatBtn");if(allBtn){allBtn.style.background="";allBtn.innerHTML="<span>Explore All Categories</span><span>↗</span>";allBtn.dataset.cat="All";}
+ var allBtn=$("allCatBtn");if(allBtn){allBtn.style.background="";allBtn.innerHTML="<span>Explore All Categories</span><span>↗</span>";}
  $("best").innerHTML=P.filter(function(p){return p.best}).map(function(p){return card(p, P.indexOf(p))}).join("")||'<div class="empty" style="grid-column:1/-1">No best sellers yet.</div>'}
+function renderCategoryOverview(){
+ var root=$("categoryOverview");if(!root)return;
+ var names=[],seen={};
+ P.forEach(function(p){var name=String(p.cat||"").trim();if(name&&!seen[name]){seen[name]=1;names.push(name)}});
+ var labels={"T-Shirt":"T-Shirts","Hoodie":"Hoodies & Sweaters","Accessories":"Accessories","Pants":"Pants"};
+ var all='<button class="category-tile category-tile-all" data-category-choice="All"><span class="category-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><strong>All Products</strong><small>'+P.length+' products</small></button>';
+ root.innerHTML=all+names.map(function(name){
+  var count=P.filter(function(p){return p.cat===name}).length,icon=ART[name]||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg>';
+  return '<button class="category-tile" data-category-choice="'+esc(name)+'"><span class="category-icon">'+icon+'</span><strong>'+esc(labels[name]||name)+'</strong><small>'+count+' products</small></button>';
+ }).join("");
+}
 var AZL="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 var PRICE_RANGES=[{label:"All Price",min:0,max:9999},{label:"$20 - $40",min:20,max:40},{label:"$41 - $70",min:41,max:70},{label:"$71 - $100+",min:71,max:9999}];
 function chip(t){return '<button class="chip'+(t==st.cat?' on':'')+'" data-cat="'+t+'">'+t+'</button>'}
