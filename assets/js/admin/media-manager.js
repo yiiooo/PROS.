@@ -2,30 +2,34 @@
  * Loaded after app.js because it uses shared globals: $, W, ADMIN, pth, renderAd, toast.
  */
 function compressAndConvertImage(file, maxWidth, maxHeight, quality, callback) {
- var reader = new FileReader();
- reader.onload = function(e) {
-  var img = new Image();
-  img.onload = function() {
-   var canvas = document.createElement("canvas");
-   var w = img.width;
-   var h = img.height;
-   if (w > maxWidth || h > maxHeight) {
-    if (w > h) {
-     h = Math.round((h * maxWidth) / w);
-     w = maxWidth;
-    } else {
-     w = Math.round((w * maxHeight) / h);
-     h = maxHeight;
+ var settled=false;
+ function finish(value){
+  if(settled)return;
+  settled=true;
+  if(typeof callback==="function")callback(value);
+ }
+ var reader=new FileReader();
+ reader.onerror=function(){toast("Gagal membaca file gambar.");finish(null)};
+ reader.onload=function(e){
+  var img=new Image();
+  img.onerror=function(){toast("Format gambar tidak dapat diproses.");finish(null)};
+  img.onload=function(){
+   try{
+    var canvas=document.createElement("canvas");
+    var w=img.width,h=img.height;
+    if(w>maxWidth||h>maxHeight){
+     if(w>h){h=Math.round((h*maxWidth)/w);w=maxWidth}
+     else{w=Math.round((w*maxHeight)/h);h=maxHeight}
     }
-   }
-   canvas.width = w;
-   canvas.height = h;
-   var ctx = canvas.getContext("2d");
-   ctx.drawImage(img, 0, 0, w, h);
-   var compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
-   callback(compressedDataUrl);
+    canvas.width=Math.max(1,w);
+    canvas.height=Math.max(1,h);
+    var ctx=canvas.getContext("2d");
+    if(!ctx)throw new Error("Canvas tidak tersedia");
+    ctx.drawImage(img,0,0,w,h);
+    finish(canvas.toDataURL("image/jpeg",quality));
+   }catch(error){console.warn("PROS image compression failed",error);toast("Gagal memproses gambar.");finish(null)}
   };
-  img.src = e.target.result;
+  img.src=e.target.result;
  };
  reader.readAsDataURL(file);
 }
@@ -69,6 +73,7 @@ function doUp(t,d){
  if(d.upcat!==undefined){
   var catName = d.upcat;
   compressAndConvertImage(fs[0], 1200, 1200, 0.85, function(compressedUrl){
+   if(!compressedUrl)return;
    if(!W.catImages)W.catImages={};
    W.catImages[catName] = compressedUrl;
    renderAd();
@@ -79,6 +84,7 @@ function doUp(t,d){
  if(d.upcol!==undefined){
   var ci = +d.upcol;
   compressAndConvertImage(fs[0], 1200, 1200, 0.85, function(compressedUrl){
+   if(!compressedUrl)return;
    if(!W.collections[ci])W.collections[ci]={name:"",desc:"",src:"",productIds:[]};
    W.collections[ci].src = compressedUrl;
    renderAd();
@@ -99,6 +105,7 @@ function doUp(t,d){
     r.readAsDataURL(f);
    } else {
     compressAndConvertImage(f, 1200, 1200, 0.85, function(compressedUrl){
+     if(!compressedUrl)return;
      if(d.upb!==undefined) W.banner.src=compressedUrl;
      else if(d.upe!==undefined) W.ev.push({src:compressedUrl,cap:""});
      else { var tg=pth(W,d.up); tg[0][tg[1]].push(compressedUrl); }
@@ -121,6 +128,7 @@ function doUp(t,d){
    r.readAsDataURL(f);
   } else {
    compressAndConvertImage(f, 1200, 1200, 0.85, function(compressedUrl){
+    if(!compressedUrl)return;
     if(!W.heroBanner)W.heroBanner={};
     W.heroBanner.src=compressedUrl;
     renderAd();
@@ -148,6 +156,7 @@ function processNextCropFile(){
   r.readAsDataURL(f);
  } else {
   compressAndConvertImage(f, 1600, 1600, 0.9, function(compressedUrl){
+   if(!compressedUrl){processNextCropFile();return;}
    openCropperModal(compressedUrl);
   });
  }
