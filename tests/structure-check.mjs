@@ -49,6 +49,8 @@ assert.ok(!app.includes("function sizeMatrix("), "Size Guide should not be defin
 assert.ok(sizeModule.includes("function sizeMatrix("), "Size Guide module missing its entry function");
 assert.ok(!app.includes("function compressAndConvertImage("), "Image compression should not be defined in app.js");
 assert.ok(mediaModule.includes("function compressAndConvertImage("), "Media module missing image compression");
+assert.ok(mediaModule.includes("image/webp") && mediaModule.includes("video/mp4"), "Media module missing upload MIME validation");
+assert.ok(mediaModule.includes("20*1024*1024") && mediaModule.includes("100*1024*1024"), "Media module missing upload size limits");
 assert.ok(!app.includes("async function saveChangesToStorage("), "Supabase persistence should not be defined in app.js");
 assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase persistence module missing save function");
 assert.ok(!app.includes("function colorVariantAdminHtml("), "Color variant renderer should not be defined in app.js");
