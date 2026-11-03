@@ -124,18 +124,18 @@ function show(v, restoreScroll){
 
 var ic={
  home:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',
- category:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+ categories:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
  collection:'<path d="M4 5h16v14H4z"/><path d="M4 10h16"/>',
  cart:'<rect x="5" y="9" width="14" height="11" rx="3"/><path d="M9 9V7a3 3 0 016 0v2"/>',
  about:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'
 };
-var lb={home:"Home",category:"Category",collection:"Collections",cart:"Cart",about:"About"};
+var lb={home:"Home",categories:"Categories",collection:"Collections",cart:"Cart",about:"About"};
 $("nav").innerHTML=Object.keys(ic).map(function(k){return '<button data-go="'+k+'" aria-label="'+lb[k]+'"><svg viewBox="0 0 24 24">'+ic[k]+'</svg><span>'+lb[k]+'</span>'+(k=="cart"?'<b class="dot" id="dot"></b>':'')+'</button>'}).join("");
 
 document.addEventListener("click",function(e){if(swd){swd=false;return}
  if(e.target.classList&&e.target.classList.contains("sheet")){closeSheet(e.target);return}
  var t=e.target.closest("[data-go],[data-cat],[data-sty],[data-pr],[data-add],[data-buy],[data-rm],[data-open],[data-back],[data-zoom],[data-th],[data-vid],[data-close],[data-lt],[data-azt],[data-azs],[data-mark],[data-gocol],[data-colzoom],[data-color-variant]");if(!t)return;var d=t.dataset;
- if(d.go!==undefined){if($("menuSheet").classList.contains("on"))closeSheet($("menuSheet"));prosPushHistory(d.go,null);if(d.go=="collection")renderCollections();show(d.go, true)}
+ if(d.go!==undefined){if($("menuSheet").classList.contains("on"))closeSheet($("menuSheet"));var targetView=d.go==="categories"?"category":d.go;prosPushHistory(targetView,null);if(targetView=="collection")renderCollections();show(targetView, true)}
  else if(d.gocol!==undefined){prosPushHistory("collection",null);renderCollections();show("collection", true)}
  else if(d.colzoom!==undefined){openColZoom(d.colzoom)}
  else if(d.azt!==undefined){st.azOpen=!st.azOpen;renderCat()}
