@@ -31,10 +31,26 @@ async function testViewport(browser, label, viewport, mobile) {
   const page = await context.newPage();
   page.setDefaultTimeout(15000);
   const pageErrors = [];
+  const consoleErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
+  page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
 
   try {
     await openPreview(page);
+    await page.waitForTimeout(2000);
+    const diagnostics = await page.evaluate(() => ({
+      title: document.title,
+      homeCount: document.querySelectorAll("#home").length,
+      homeClass: document.querySelector("#home") && document.querySelector("#home").className,
+      visibleViews: Array.from(document.querySelectorAll(".view.on")).map(element => element.id),
+      navCount: document.querySelectorAll("#nav [data-go]").length,
+      bodyText: (document.body && document.body.innerText || "").slice(0, 350)
+    }));
+    console.log("Browser diagnostics", label, JSON.stringify(diagnostics));
+    console.log("Page errors", label, JSON.stringify(pageErrors));
+    console.log("Console errors", label, JSON.stringify(consoleErrors));
+    fs.mkdirSync(artifactDir, { recursive: true });
+    await page.screenshot({ path: path.join(artifactDir, "pros-" + label + "-diagnostic.png"), fullPage: true });
     await page.waitForSelector("#home.on", { state: "visible", timeout: 30000 });
     await page.waitForSelector('#nav [data-go="category"]', { state: "visible" });
 
