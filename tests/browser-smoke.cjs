@@ -99,10 +99,16 @@ async function testViewport(browser, label, viewport, mobile) {
     fs.mkdirSync(artifactDir, { recursive: true });
     await page.screenshot({ path: path.join(artifactDir, "pros-" + label + "-diagnostic.png"), fullPage: true });
     await page.waitForSelector("#home.on", { state: "visible", timeout: 30000 });
-    await page.waitForSelector('#nav [data-go="category"]', { state: "visible" });
+    await page.waitForSelector('#nav [data-go="categories"]', { state: "visible" });
+    assert.equal(await page.locator('#nav [data-go="categories"]').innerText(), "Categories");
 
-    await page.locator('#nav [data-go="category"]').click();
+    await page.locator("#allCatBtn").click();
     await page.waitForSelector("#category.on", { state: "visible" });
+    assert.equal(await page.locator("#category h2").innerText(), "Categories");
+
+    await page.locator('#nav [data-go="categories"]').click();
+    await page.waitForSelector("#category.on", { state: "visible" });
+    assert.equal(await page.locator('#nav [data-go="categories"]').getAttribute("class"), "on");
 
     await page.locator('#nav [data-go="home"]').click();
     await page.waitForSelector("#home.on", { state: "visible" });
