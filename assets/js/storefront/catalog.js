@@ -43,7 +43,7 @@ function renderHome(){
  var homeCats=$("homecats");if(homeCats)homeCats.innerHTML="";
  var allBtn=$("allCatBtn");if(allBtn){allBtn.style.background="";allBtn.innerHTML="<span>Explore All Categories</span><span>↗</span>";allBtn.dataset.cat="All";}
  $("best").innerHTML=P.filter(function(p){return p.best}).map(function(p){return card(p, P.indexOf(p))}).join("")||'<div class="empty" style="grid-column:1/-1">No best sellers yet.</div>'}
-var LEFT=["All","New Release"].concat(CN),AZL="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+var AZL="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 var PRICE_RANGES=[{label:"All Price",min:0,max:9999},{label:"$20 - $40",min:20,max:40},{label:"$41 - $70",min:41,max:70},{label:"$71 - $100+",min:71,max:9999}];
 function chip(t){return '<button class="chip'+(t==st.cat?' on':'')+'" data-cat="'+t+'">'+t+'</button>'}
 function priceChip(pr){var lbl=pr.label,on=(st.priceRange===lbl||(!st.priceRange&&lbl=="All Price"));return '<button class="chip'+(on?' on':'')+'" data-pr="'+lbl+'">'+lbl+'</button>'}
@@ -55,7 +55,7 @@ if(st.priceRange && st.priceRange!="All Price"){
 if(st.priceRange && st.priceRange!="All Price"){list=list.slice().sort(function(a,b){var pa=a.price!==undefined?a.price:30,pb=b.price!==undefined?b.price:30;if(pa!==pb)return pa-pb;return P.indexOf(a)-P.indexOf(b)});}
 return list;}
 function renderCat(){var c=st.cat,base=baseList(),have={},L=st.letters;
- $("catchips").innerHTML=LEFT.map(chip).join("");
+ $("catchips").innerHTML=["All","New Release"].concat(CN).map(chip).join("");
  $("pricechips").innerHTML=PRICE_RANGES.map(priceChip).join("");
  base.forEach(function(p){have[p.name[0].toUpperCase()]=1});
  var sum=L.length?L.join(", "):(st.az?"sorted":"");
