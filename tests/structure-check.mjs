@@ -11,7 +11,7 @@ const localStyles = [...html.matchAll(/<link\b[^>]*\bhref=["']([^"']+\.css)["']/
   .filter(src => !/^https?:\/\//i.test(src) && !src.startsWith("//"));
 
 for (const asset of [...localScriptPaths, ...localStyles]) {
-  assert.ok(fs.existsSync(path.resolve(asset)), `Missing local asset: \${asset}`);
+  assert.ok(fs.existsSync(path.resolve(asset)), `Missing local asset: ${asset}`);
 }
 
 const requiredOrder = [
@@ -24,9 +24,9 @@ const requiredOrder = [
 ];
 let previous = -1;
 for (const src of requiredOrder) {
-  const index = html.indexOf(`src="\${src}"`);
-  assert.ok(index >= 0, `Missing required script: \${src}`);
-  assert.ok(index > previous, `Unexpected script load order at: \${src}`);
+  const index = html.indexOf(`src="${src}"`);
+  assert.ok(index >= 0, `Missing required script: ${src}`);
+  assert.ok(index > previous, `Unexpected script load order at: ${src}`);
   previous = index;
 }
 
@@ -36,7 +36,7 @@ for (const stylesheet of [
   "product-taxonomy.css",
   "home-category-strip.css"
 ]) {
-  assert.ok(html.includes(`href="assets/css/\${stylesheet}"`), `Missing stylesheet: \${stylesheet}`);
+  assert.ok(html.includes(`href="assets/css/${stylesheet}"`), `Missing stylesheet: ${stylesheet}`);
 }
 
 const app = fs.readFileSync("assets/js/app.js", "utf8");
@@ -54,4 +54,4 @@ assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase
 assert.ok(!app.includes("function colorVariantAdminHtml("), "Color variant renderer should not be defined in app.js");
 assert.ok(colorModule.includes("function colorVariantAdminHtml("), "Color variant module missing its renderer");
 
-console.log(`Structure checks passed: \${localScriptPaths.length} local scripts and \${localStyles.length} local stylesheets.`);
+console.log(`Structure checks passed: ${localScriptPaths.length} local scripts and ${localStyles.length} local stylesheets.`);
