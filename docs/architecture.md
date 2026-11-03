@@ -3,6 +3,8 @@
 ## Entry point
 
 - `index.html` is the static entry point.
+- `data.json` mirrors the embedded seed data and is used as the optional static fallback when no browser-local copy exists.
+- `_headers` defines baseline security response headers for Cloudflare Pages.
 - Product seed data remains in `<script type="application/json" id="pdata">`; it is data, not executable inline JavaScript.
 - Stylesheets live under `assets/css/`.
 - JavaScript is loaded as ordered classic scripts to preserve the existing global-function integration while the app is being modularized.
@@ -38,6 +40,7 @@
 - `assets/js/supabase.js`: Supabase client initialization and remote data loading.
 - `assets/js/app.js`: shared state initialization, core helpers, navigation, event orchestration, admin entry/auth flow and application bootstrap.
 - `product-information.js`, `product-undo.js`, `product-photo-tools.js`, and `product-taxonomy.js`: isolated feature add-ons retained as separate modules.
+- Product Information copy controls serialize table rows to plain text (`Label: Value`); HTML table markup is never copied.
 
 ## Script order contract
 
