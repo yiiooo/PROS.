@@ -100,7 +100,7 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.screenshot({ path: path.join(artifactDir, "pros-" + label + "-diagnostic.png"), fullPage: true });
     await page.waitForSelector("#home.on", { state: "visible", timeout: 30000 });
     await page.waitForSelector('#nav [data-go="categories"]', { state: "visible" });
-    assert.equal(await page.locator('#nav [data-go="categories"]').innerText(), "Categories");
+    assert.equal(await page.locator('#nav [data-go="categories"]').getAttribute("aria-label"), "Categories");
     assert.equal(await page.locator('#nav [data-go="category"]').count(), 0, "There must be only one Categories navigation item");
     assert.equal(await page.locator('.tl [data-go="category"], #menuSheet [data-go="category"]').count(), 0, "No duplicate Category navigation in header or menu");
 
