@@ -108,6 +108,8 @@ async function testViewport(browser, label, viewport, mobile) {
     assert.ok(await addButton.count(), "Product detail must expose Add to Cart");
     await addButton.click();
 
+    await page.locator("#detail [data-back]").click();
+    await page.waitForSelector("#home.on", { state: "visible" });
     await page.locator('#nav [data-go="cart"]').click();
     await page.waitForSelector("#cart.on", { state: "visible" });
     assert.ok(await page.locator("#cartlist .item").count(), "Cart should contain the added product");
