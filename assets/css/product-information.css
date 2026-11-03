@@ -11,3 +11,11 @@
 @media(max-width:640px){.pros-info-admin{padding:11px}.pros-info-table{min-width:300px}.pros-info-table th{width:40%}}
 
 /* PROS feature stylesheet extracted for maintainable ownership. */
+
+.pros-info-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
+.pros-info-panel-head h3{font-size:14px;margin:0}
+.pros-info-copy{flex:0 0 auto;border:1px solid var(--ln);border-radius:999px;padding:6px 10px;background:var(--sf);color:var(--tx);font:inherit;font-size:11px;line-height:1.2;cursor:pointer}
+.pros-info-copy:disabled{opacity:.55;cursor:wait}
+.pros-info-copy:focus-visible{outline:2px solid var(--tx);outline-offset:2px}
+.pros-info-copy-buffer{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}
+@media(max-width:640px){.pros-info-panel-head{align-items:flex-start}.pros-info-copy{padding:6px 9px}}
