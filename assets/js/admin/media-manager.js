@@ -34,7 +34,21 @@ var cropTarget=null, cropFilesQueue=[];
 
 function doUp(t,d){
  if(!ADMIN)return;
- var fs=Array.from(t.files); t.value="";
+ var fs=Array.from(t.files||[]); t.value="";
+ if(!fs.length)return;
+ var allowedImages=["image/jpeg","image/png","image/webp","image/gif"];
+ var allowedVideos=["video/mp4","video/webm","video/quicktime","video/ogg","video/3gpp","video/x-m4v"];
+ var rejected=0;
+ fs=fs.filter(function(file){
+  var type=String(file&&file.type||"").toLowerCase();
+  var image=allowedImages.indexOf(type)>-1;
+  var video=allowedVideos.indexOf(type)>-1;
+  if(!image&&!video){rejected++;return false;}
+  var limit=image?20*1024*1024:100*1024*1024;
+  if(Number(file.size)>limit){rejected++;return false;}
+  return true;
+ });
+ if(rejected)toast(rejected+" file(s) ditolak. Format gambar: JPG, PNG, WebP, GIF; video: MP4, WebM, MOV, OGG. Batas gambar 20 MB dan video 100 MB.");
  if(!fs.length)return;
  
  if(d.upho!==undefined){
