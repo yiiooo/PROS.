@@ -101,14 +101,25 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.waitForSelector("#home.on", { state: "visible", timeout: 30000 });
     await page.waitForSelector('#nav [data-go="categories"]', { state: "visible" });
     assert.equal(await page.locator('#nav [data-go="categories"]').innerText(), "Categories");
+    assert.equal(await page.locator('#nav [data-go="category"]').count(), 0, "There must be only one Categories navigation item");
+    assert.equal(await page.locator('.tl [data-go="category"], #menuSheet [data-go="category"]').count(), 0, "No duplicate Category navigation in header or menu");
 
     await page.locator("#allCatBtn").click();
     await page.waitForSelector("#category.on", { state: "visible" });
-    assert.equal(await page.locator("#category h2").innerText(), "Categories");
+    assert.equal(await page.locator("#category h2").innerText(), "ALL CATEGORIES");
+    assert.ok(await page.locator("#categoryOverview .category-tile").count() >= 2);
+    assert.equal(await page.locator("#catalog.on").count(), 0, "Catalogue filters/products must not show on the overview");
 
     await page.locator('#nav [data-go="categories"]').click();
     await page.waitForSelector("#category.on", { state: "visible" });
-    assert.equal(await page.locator('#nav [data-go="categories"]').getAttribute("class"), "on");
+    assert.equal(await page.locator('#nav [data-go="categories"]').evaluate(element => element.classList.contains("on")), true);
+    await page.locator('#categoryOverview [data-category-choice="T-Shirt"]').click();
+    await page.waitForSelector("#catalog.on", { state: "visible" });
+    assert.equal(await page.locator("#catalogHeading").innerText(), "T-Shirts");
+    assert.ok(await page.locator("#catgrid .card").count() > 0);
+    await page.locator("#catalog [data-categories-open]").click();
+    await page.waitForSelector("#category.on", { state: "visible" });
+    assert.equal(await page.locator('#nav [data-go="categories"]').evaluate(element => element.classList.contains("on")), true);
 
     await page.locator('#nav [data-go="home"]').click();
     await page.waitForSelector("#home.on", { state: "visible" });
