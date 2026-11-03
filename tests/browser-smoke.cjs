@@ -134,6 +134,18 @@ async function testViewport(browser, label, viewport, mobile) {
     });
     await page.waitForSelector("#cropModal.on", { state: "visible", timeout: 20000 });
     await page.locator("#cropSave").click();
+    await page.waitForTimeout(1500);
+    const cropDiagnostics = await page.evaluate(() => ({
+      imageCount: window.W && window.W.products && window.W.products[0] && window.W.products[0].imgs ? window.W.products[0].imgs.length : null,
+      cropTarget: window.cropTarget,
+      cropQueue: window.cropFilesQueue && window.cropFilesQueue.length,
+      cropModalClass: document.getElementById("cropModal") && document.getElementById("cropModal").className,
+      cropImageSrc: document.getElementById("cropImg") && String(document.getElementById("cropImg").src).slice(0, 35),
+      cropImageWidth: document.getElementById("cropImg") && document.getElementById("cropImg").naturalWidth,
+      toast: document.getElementById("toast") && document.getElementById("toast").textContent
+    }));
+    console.log("Crop diagnostics", label, JSON.stringify(cropDiagnostics));
+    console.log("Page errors after crop", label, JSON.stringify(pageErrors));
     await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 20000 });
     await page.waitForSelector("#prosUndo:not(:disabled)", { state: "visible" });
     await page.locator("#prosUndo").click();
