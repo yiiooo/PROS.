@@ -42,6 +42,7 @@ for (const stylesheet of [
 }
 
 const app = fs.readFileSync("assets/js/app.js", "utf8");
+const photoTools = fs.readFileSync("product-photo-tools.js", "utf8");
 const sizeModule = fs.readFileSync("assets/js/admin/size-guide.js", "utf8");
 const mediaModule = fs.readFileSync("assets/js/admin/media-manager.js", "utf8");
 const saveModule = fs.readFileSync("assets/js/integrations/supabase-save.js", "utf8");
@@ -55,6 +56,9 @@ assert.ok(!app.includes("function compressAndConvertImage("), "Image compression
 assert.ok(mediaModule.includes("function compressAndConvertImage("), "Media module missing image compression");
 assert.ok(mediaModule.includes("image/webp") && mediaModule.includes("video/mp4"), "Media module missing upload MIME validation");
 assert.ok(mediaModule.includes("20*1024*1024") && mediaModule.includes("100*1024*1024"), "Media module missing upload size limits");
+assert.ok(mediaModule.includes("reader.onerror") && mediaModule.includes("img.onerror"), "Media module missing read/decode error handling");
+assert.ok(photoTools.includes("image/webp") && photoTools.includes("20*1024*1024"), "Photo tools must validate files before opening undo state");
+assert.ok(app.includes("if(searchRow)"), "Optional search row must be null-safe");
 assert.ok(!app.includes("async function saveChangesToStorage("), "Supabase persistence should not be defined in app.js");
 assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase persistence module missing save function");
 assert.ok(!app.includes("function colorVariantAdminHtml("), "Color variant renderer should not be defined in app.js");
