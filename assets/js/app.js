@@ -102,7 +102,7 @@ function show(v, restoreScroll){
  var prevView = cur;
  cur=v;
  document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("on",x.id==v)});
- document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
+ document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",(b.dataset.go==="categories"?"category":b.dataset.go)==v)});
  document.querySelectorAll(".tl button").forEach(function(b){b.classList.toggle("on",b.dataset.go==v)});
  document.body.classList.toggle("det",v=="detail");
  var searchRow=$("sr");if(searchRow)searchRow.style.display=(v=="home"||v=="category"||v=="results")?"flex":"none";
