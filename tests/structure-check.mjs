@@ -48,6 +48,27 @@ for (const stylesheet of [
   assert.ok(html.includes(`href="assets/css/${stylesheet}"`), `Missing stylesheet: ${stylesheet}`);
 }
 
+const jsFiles = [
+  "assets/js/app.js",
+  "assets/js/storefront/catalog.js",
+  "assets/js/storefront/product-detail.js",
+  "assets/js/storefront/site-content.js",
+  "assets/js/admin/size-guide.js",
+  "assets/js/admin/dashboard.js",
+  "assets/js/admin/media-manager.js",
+  "assets/js/admin/product-color-variants.js",
+  "assets/js/integrations/supabase-save.js",
+  "assets/js/supabase.js",
+  "product-information.js",
+  "product-undo.js",
+  "product-photo-tools.js",
+  "product-taxonomy.js"
+];
+for (const file of jsFiles) {
+  const source = fs.readFileSync(file, "utf8");
+  assert.ok(!source.includes('createElement("style")') && !source.includes("createElement('style')"), `Dynamic style injection remains in ${file}`);
+}
+
 const app = fs.readFileSync("assets/js/app.js", "utf8");
 const photoTools = fs.readFileSync("product-photo-tools.js", "utf8");
 const productInformation = fs.readFileSync("product-information.js", "utf8");
