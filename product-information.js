@@ -20,6 +20,35 @@
     }).filter(function(row){return row&&row[0]&&row[1];});
   }
   function ensureInfo(p){if(!p.info||typeof p.info!=="object")p.info={};return p.info;}
+  function panelPlainText(panel){
+    if(!panel)return "";
+    var title=panel.querySelector("h3"),rows=Array.from(panel.querySelectorAll("table tr"));
+    var lines=rows.map(function(row){
+      var cells=Array.from(row.querySelectorAll("th,td")).map(function(cell){return (cell.textContent||"").trim();}).filter(Boolean);
+      return cells.length>1?cells[0]+": "+cells.slice(1).join(" "):cells.join(" ");
+    }).filter(Boolean);
+    return [title&&(title.textContent||"").trim()].concat(lines).filter(Boolean).join("\n");
+  }
+  function legacyCopy(text){
+    return new Promise(function(resolve,reject){
+      var input=document.createElement("textarea");
+      input.className="pros-info-copy-buffer";
+      input.value=text;
+      input.setAttribute("readonly","");
+      document.body.appendChild(input);
+      input.select();
+      var ok=false;
+      try{ok=document.execCommand("copy");}catch(err){}
+      input.remove();
+      ok?resolve():reject(new Error("Clipboard copy failed"));
+    });
+  }
+  function copyPlainText(text){
+    if(navigator.clipboard&&typeof navigator.clipboard.writeText==="function"){
+      return navigator.clipboard.writeText(text).catch(function(){return legacyCopy(text);});
+    }
+    return legacyCopy(text);
+  }
   function adminMarkup(pi,p){
     var info=ensureInfo(p);
     return '<section class="pros-info-admin"><h2>Product Information</h2>'+
@@ -41,7 +70,7 @@
       available.map(function(sec){
         var rows=parseRows(info[sec.id]);
         return '<div class="pros-info-panel'+(sec.id===first?' is-active':'')+'" role="tabpanel" data-pros-info-panel="'+sec.id+'">'+
-          '<h3>'+esc(sec.label)+'</h3><div class="pros-info-table-wrap"><table class="pros-info-table"><tbody>'+
+          '<div class="pros-info-panel-head"><h3>'+esc(sec.label)+'</h3><button type="button" class="pros-info-copy" data-pros-info-copy="'+sec.id+'">Copy text</button></div><div class="pros-info-table-wrap"><table class="pros-info-table"><tbody>'+
           rows.map(function(row){return '<tr><th scope="row">'+esc(row[0])+'</th><td>'+esc(row[1])+'</td></tr>';}).join("")+
           '</tbody></table></div></div>';
       }).join("")+'</section>';
@@ -98,6 +127,21 @@
     if(detail&&!detail.dataset.prosInfoTabsBound){
       detail.dataset.prosInfoTabsBound="1";
       detail.addEventListener("click",function(e){
+        var copy=e.target.closest("[data-pros-info-copy]");
+        if(copy){
+          e.preventDefault();
+          var panel=copy.closest("[data-pros-info-panel]"),plain=panelPlainText(panel),original=copy.textContent;
+          if(!plain)return;
+          copy.disabled=true;
+          copyPlainText(plain).then(function(){
+            copy.textContent="Copied";
+            if(typeof window.toast==="function")window.toast("Product information copied as plain text.");
+          }).catch(function(){
+            copy.textContent="Copy failed";
+            if(typeof window.toast==="function")window.toast("Could not copy product information.");
+          }).finally(function(){setTimeout(function(){copy.textContent=original;copy.disabled=false;},1600);});
+          return;
+        }
         var tab=e.target.closest("[data-pros-info-tab]");if(!tab)return;
         var section=tab.dataset.prosInfoTab,root=tab.closest(".pros-product-info");if(!root)return;
         root.querySelectorAll("[data-pros-info-tab]").forEach(function(b){b.setAttribute("aria-selected",b===tab?"true":"false");});
