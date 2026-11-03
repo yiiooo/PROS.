@@ -101,8 +101,26 @@ async function testViewport(browser, label, viewport, mobile) {
 
     const productLink = page.locator("#best [data-open]").first();
     assert.ok(await productLink.count(), "Expected a product card in Best Sellers");
+    const productId = await productLink.getAttribute("data-open");
+    await page.evaluate(id => {
+      const product = window.DB.products.find(item => String(item.id) === String(id));
+      product.info = { style: "Fit | Oversized\\nStyle | Streetwear" };
+    }, productId);
     await productLink.click();
     await page.waitForSelector("#detail.on", { state: "visible" });
+    await page.evaluate(() => {
+      window.__prosCopiedText = "";
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: { writeText: async text => { window.__prosCopiedText = text; } }
+      });
+    });
+    await page.locator('#detail [data-pros-info-copy="style"]').click();
+    await page.waitForFunction(() => typeof window.__prosCopiedText === "string" && window.__prosCopiedText.length > 0);
+    const copiedProductInfo = await page.evaluate(() => window.__prosCopiedText);
+    assert.ok(copiedProductInfo.includes("Fit: Oversized"), "Copy must include plain-text product information");
+    assert.ok(copiedProductInfo.includes("Style: Streetwear"), "Copy must include all text rows");
+    assert.ok(!/<\\/?(table|tbody|tr|th|td)\\b/i.test(copiedProductInfo), "Copy must not include HTML table markup");
 
     const addButton = page.locator("#detail [data-add]").first();
     assert.ok(await addButton.count(), "Product detail must expose Add to Cart");
