@@ -1,10 +1,49 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const http = require("node:http");
 const { chromium } = require("playwright");
 
-const baseUrl = process.env.PROS_PREVIEW_URL || "https://refactor-extract-feature-css.pros-product-info-preview.pages.dev";
+const baseUrl = process.env.PROS_PREVIEW_URL || "http://127.0.0.1:4173/";
 const artifactDir = process.env.PROS_ARTIFACT_DIR || "artifacts";
+
+function startStaticServer() {
+  const root = process.cwd();
+  const mime = {
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".ico": "image/x-icon",
+    ".woff2": "font/woff2"
+  };
+  const server = http.createServer((req, res) => {
+    let pathname;
+    try { pathname = decodeURIComponent(new URL(req.url, "http://127.0.0.1").pathname); }
+    catch { res.writeHead(400); res.end("Bad request"); return; }
+    let file = path.resolve(root, "." + pathname);
+    if (file !== root && !file.startsWith(root + path.sep)) {
+      res.writeHead(403); res.end("Forbidden"); return;
+    }
+    try {
+      if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
+    } catch {}
+    fs.readFile(file, (error, data) => {
+      if (error) { res.writeHead(404); res.end("Not found"); return; }
+      res.writeHead(200, { "Content-Type": mime[path.extname(file).toLowerCase()] || "application/octet-stream", "Cache-Control": "no-store" });
+      res.end(data);
+    });
+  });
+  return new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(4173, "127.0.0.1", () => resolve(server));
+  });
+}
 
 async function openPreview(page) {
   let lastError;
@@ -87,12 +126,14 @@ async function testViewport(browser, label, viewport, mobile) {
 }
 
 (async () => {
+  const server = await startStaticServer();
   const browser = await chromium.launch({ headless: true });
   try {
     await testViewport(browser, "mobile", { width: 390, height: 844 }, true);
     await testViewport(browser, "desktop", { width: 1365, height: 900 }, false);
   } finally {
     await browser.close();
+    await new Promise(resolve => server.close(resolve));
   }
 })().catch(error => {
   console.error(error);
