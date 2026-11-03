@@ -20,6 +20,7 @@ const headers = fs.readFileSync("_headers", "utf8");
 assert.ok(headers.includes("X-Content-Type-Options: nosniff"), "Security headers must include nosniff");
 assert.ok(headers.includes("X-Frame-Options: DENY"), "Security headers must prevent framing");
 assert.ok(headers.includes("Referrer-Policy:"), "Security headers must define a referrer policy");
+assert.ok(headers.includes("Content-Security-Policy:") && headers.includes("object-src 'none'") && headers.includes("frame-ancestors 'none'"), "Security headers must include a restrictive content security policy");
 const localScriptPaths = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi)]
   .map(match => match[1])
   .filter(src => !/^https?:\/\//i.test(src) && !src.startsWith("//"));
