@@ -46,8 +46,6 @@ jobs:
         run: npm install --no-save --no-package-lock playwright@1.56.1
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Serve static site for browser tests
-        run: python3 -m http.server 4173 --directory . > /tmp/pros-http.log 2>&1 &
       - name: Test storefront on mobile and desktop
         env:
           PROS_PREVIEW_URL: http://127.0.0.1:4173/
