@@ -114,6 +114,33 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.waitForSelector("#cart.on", { state: "visible" });
     assert.ok(await page.locator("#cartlist .item").count(), "Cart should contain the added product");
 
+    // Exercise the admin photo drag/drop + crop + undo/redo path without changing production data.
+    await page.evaluate(() => {
+      window.ADMIN = true;
+      window.openAd();
+    });
+    await page.waitForSelector("#ad.on", { state: "visible" });
+    await page.locator('#adl [data-ae="0"]').click();
+    await page.waitForSelector("#adc .pros-product-photo-zone", { state: "visible" });
+
+    await page.locator(".pros-product-photo-zone").evaluate(zone => {
+      const raw = atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC");
+      const bytes = Uint8Array.from(raw, char => char.charCodeAt(0));
+      const file = new File([new Blob([bytes], { type: "image/png" })], "pros-smoke.png", { type: "image/png" });
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      zone.dispatchEvent(new DragEvent("dragover", { bubbles: true, cancelable: true, dataTransfer: transfer }));
+      zone.dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: transfer }));
+    });
+    await page.waitForSelector("#cropModal.on", { state: "visible", timeout: 20000 });
+    await page.locator("#cropSave").click();
+    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 20000 });
+    await page.waitForSelector("#prosUndo:not(:disabled)", { state: "visible" });
+    await page.locator("#prosUndo").click();
+    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 0, { timeout: 10000 });
+    await page.locator("#prosRedo").click();
+    await page.waitForFunction(() => document.querySelectorAll("#adc .pros-product-photo-zone .th2").length === 1, { timeout: 10000 });
+
     fs.mkdirSync(artifactDir, { recursive: true });
     await page.screenshot({
       path: path.join(artifactDir, "pros-" + label + ".png"),
