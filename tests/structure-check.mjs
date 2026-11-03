@@ -7,6 +7,7 @@ assert.equal((html.match(/<style\b/gi) || []).length, 0, "index.html should not 
 const inlineExecutableScripts = [...html.matchAll(/<script\b([^>]*)>/gi)]
   .filter(match => !/\bsrc\s*=/.test(match[1]) && !/type\s*=\s*["']application\/json["']/i.test(match[1]));
 assert.equal(inlineExecutableScripts.length, 0, "index.html should not contain executable inline scripts");
+assert.ok(fs.existsSync("favicon.svg"), "Brand favicon must be present");
 const localScriptPaths = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi)]
   .map(match => match[1])
   .filter(src => !/^https?:\/\//i.test(src) && !src.startsWith("//"));
