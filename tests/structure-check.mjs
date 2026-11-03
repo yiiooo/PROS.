@@ -3,15 +3,15 @@ import path from "node:path";
 import assert from "node:assert/strict";
 
 const html = fs.readFileSync("index.html", "utf8");
-const localScriptPaths = [...html.matchAll(/<script\\b[^>]*\\bsrc=["']([^"']+)["']/gi)]
+const localScriptPaths = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi)]
   .map(match => match[1])
-  .filter(src => !/^https?:\\/\\//i.test(src) && !src.startsWith("//"));
-const localStyles = [...html.matchAll(/<link\\b[^>]*\\bhref=["']([^"']+\\.css)["']/gi)]
+  .filter(src => !/^https?:\/\//i.test(src) && !src.startsWith("//"));
+const localStyles = [...html.matchAll(/<link\b[^>]*\bhref=["']([^"']+\.css)["']/gi)]
   .map(match => match[1])
-  .filter(src => !/^https?:\\/\\//i.test(src) && !src.startsWith("//"));
+  .filter(src => !/^https?:\/\//i.test(src) && !src.startsWith("//"));
 
 for (const asset of [...localScriptPaths, ...localStyles]) {
-  assert.ok(fs.existsSync(path.resolve(asset)), `Missing local asset: ${asset}`);
+  assert.ok(fs.existsSync(path.resolve(asset)), \`Missing local asset: \${asset}\`);
 }
 
 const requiredOrder = [
@@ -23,16 +23,20 @@ const requiredOrder = [
 ];
 let previous = -1;
 for (const src of requiredOrder) {
-  const index = html.indexOf(`src="${src}"`);
-  assert.ok(index >= 0, `Missing required script: ${src}`);
-  assert.ok(index > previous, `Unexpected script load order at: ${src}`);
+  const index = html.indexOf(\`src="\${src}"\`);
+  assert.ok(index >= 0, \`Missing required script: \${src}\`);
+  assert.ok(index > previous, \`Unexpected script load order at: \${src}\`);
   previous = index;
 }
 
-assert.ok(html.includes('href="assets/css/product-information.css"'));
-assert.ok(html.includes('href="assets/css/product-undo.css"'));
-assert.ok(html.includes('href="assets/css/product-taxonomy.css"'));
-assert.ok(html.includes('href="assets/css/home-category-strip.css"'));
+for (const stylesheet of [
+  "product-information.css",
+  "product-undo.css",
+  "product-taxonomy.css",
+  "home-category-strip.css"
+]) {
+  assert.ok(html.includes(\`href="assets/css/\${stylesheet}"\`), \`Missing stylesheet: \${stylesheet}\`);
+}
 
 const app = fs.readFileSync("assets/js/app.js", "utf8");
 const sizeModule = fs.readFileSync("assets/js/admin/size-guide.js", "utf8");
@@ -46,4 +50,4 @@ assert.ok(mediaModule.includes("function compressAndConvertImage("), "Media modu
 assert.ok(!app.includes("async function saveChangesToStorage("), "Supabase persistence should not be defined in app.js");
 assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase persistence module missing save function");
 
-console.log(`Structure checks passed: ${localScriptPaths.length} local scripts and ${localStyles.length} local stylesheets.`);
+console.log(\`Structure checks passed: \${localScriptPaths.length} local scripts and \${localStyles.length} local stylesheets.\`);
