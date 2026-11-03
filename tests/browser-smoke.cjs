@@ -124,7 +124,7 @@ async function testViewport(browser, label, viewport, mobile) {
     await page.waitForSelector("#adc .pros-product-photo-zone", { state: "visible" });
 
     await page.locator(".pros-product-photo-zone").evaluate(zone => {
-      const raw = atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC");
+      const raw = atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGP4DwQACfsD/fteaysAAAAASUVORK5CYII=");
       const bytes = Uint8Array.from(raw, char => char.charCodeAt(0));
       const file = new File([new Blob([bytes], { type: "image/png" })], "pros-smoke.png", { type: "image/png" });
       const transfer = new DataTransfer();
