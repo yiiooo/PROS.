@@ -15,6 +15,8 @@ for (const asset of [...localScriptPaths, ...localStyles]) {
 }
 
 const requiredOrder = [
+  "assets/js/storefront/catalog.js",
+  "assets/js/storefront/product-detail.js",
   "assets/js/admin/size-guide.js",
   "assets/js/app.js",
   "assets/js/admin/media-manager.js",
@@ -44,6 +46,8 @@ const sizeModule = fs.readFileSync("assets/js/admin/size-guide.js", "utf8");
 const mediaModule = fs.readFileSync("assets/js/admin/media-manager.js", "utf8");
 const saveModule = fs.readFileSync("assets/js/integrations/supabase-save.js", "utf8");
 const colorModule = fs.readFileSync("assets/js/admin/product-color-variants.js", "utf8");
+const catalogModule = fs.readFileSync("assets/js/storefront/catalog.js", "utf8");
+const detailModule = fs.readFileSync("assets/js/storefront/product-detail.js", "utf8");
 
 assert.ok(!app.includes("function sizeMatrix("), "Size Guide should not be defined in app.js");
 assert.ok(sizeModule.includes("function sizeMatrix("), "Size Guide module missing its entry function");
@@ -54,6 +58,8 @@ assert.ok(mediaModule.includes("20*1024*1024") && mediaModule.includes("100*1024
 assert.ok(!app.includes("async function saveChangesToStorage("), "Supabase persistence should not be defined in app.js");
 assert.ok(saveModule.includes("async function saveChangesToStorage("), "Supabase persistence module missing save function");
 assert.ok(!app.includes("function colorVariantAdminHtml("), "Color variant renderer should not be defined in app.js");
+assert.ok(!app.includes("function renderCat(") && catalogModule.includes("function renderCat("), "Catalog renderer extraction failed");
+assert.ok(!app.includes("function open_(") && detailModule.includes("function open_("), "Product detail extraction failed");
 assert.ok(colorModule.includes("function colorVariantAdminHtml("), "Color variant module missing its renderer");
 
 console.log(`Structure checks passed: ${localScriptPaths.length} local scripts and ${localStyles.length} local stylesheets.`);
