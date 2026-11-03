@@ -30,23 +30,6 @@
           '<textarea class="in2 pros-info-textarea" id="pros-info-'+sec.id+'" data-pros-info="'+sec.id+'" data-pros-info-product="'+pi+'" rows="4" placeholder="Fit | Oversized&#10;Style | Streetwear">'+esc(info[sec.id]||"")+'</textarea>';
       }).join("")+'</section>';
   }
-  function installStyle(){
-    if(document.getElementById("pros-info-style"))return;
-    var st=document.createElement("style");st.id="pros-info-style";
-    st.textContent=
-      ".pros-info-admin{margin:18px 0;padding:14px;border:1px solid var(--ln);border-radius:10px;background:var(--sf)}"+
-      ".pros-info-admin h2{margin:0 0 8px}.pros-info-help,.pros-info-hint{font-size:12px;line-height:1.5;color:var(--mu);margin:0 0 8px}"+
-      ".pros-info-label{display:block;margin-top:12px;font-weight:700}.pros-info-textarea{display:block;width:100%;min-height:88px;resize:vertical;white-space:pre-wrap}"+
-      ".pros-product-info{margin:16px 0 18px;min-width:0}.pros-info-tabs{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:4px 1px 10px;-webkit-overflow-scrolling:touch}"+
-      ".pros-info-tab{flex:0 0 auto;border:1px solid var(--ln);border-radius:999px;padding:8px 13px;background:var(--sf);color:inherit;font:inherit;font-size:12px;white-space:nowrap;cursor:pointer}"+
-      ".pros-info-tab[aria-selected=true]{background:var(--tx);color:var(--bg);border-color:var(--tx)}"+
-      ".pros-info-panel{display:none}.pros-info-panel.is-active{display:block}.pros-info-panel h3{font-size:14px;margin:10px 0}"+
-      ".pros-info-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--ln);border-radius:8px}"+
-      ".pros-info-table{width:100%;border-collapse:collapse;min-width:320px;font-size:13px}.pros-info-table th,.pros-info-table td{padding:10px 12px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:top}"+
-      ".pros-info-table tr:last-child th,.pros-info-table tr:last-child td{border-bottom:0}.pros-info-table th{width:38%;font-weight:650;background:var(--sf)}"+
-      "@media(max-width:640px){.pros-info-admin{padding:11px}.pros-info-table{min-width:300px}.pros-info-table th{width:40%}}";
-    document.head.appendChild(st);
-  }
   function customerMarkup(p){
     var info=ensureInfo(p),available=sections.filter(function(sec){return parseRows(info[sec.id]).length;});
     if(!available.length)return "";
@@ -64,7 +47,6 @@
       }).join("")+'</section>';
   }
   function init(){
-    installStyle();
     if(typeof window.renderAd==="function"&&!window.renderAd.__prosInfoWrapped){
       var oldRenderAd=window.renderAd;
       var wrappedRenderAd=function(){
