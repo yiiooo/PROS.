@@ -3,9 +3,9 @@ import path from "node:path";
 import assert from "node:assert/strict";
 
 const html = fs.readFileSync("index.html", "utf8");
-assert.equal((html.match(/<style\\b/gi) || []).length, 0, "index.html should not contain style blocks");
-const inlineExecutableScripts = [...html.matchAll(/<script\\b([^>]*)>/gi)]
-  .filter(match => !/\\bsrc\\s*=/.test(match[1]) && !/type\\s*=\\s*["']application\\/json["']/i.test(match[1]));
+assert.equal((html.match(/<style\b/gi) || []).length, 0, "index.html should not contain style blocks");
+const inlineExecutableScripts = [...html.matchAll(/<script\b([^>]*)>/gi)]
+  .filter(match => !/\bsrc\s*=/.test(match[1]) && !/type\s*=\s*["']application\/json["']/i.test(match[1]));
 assert.equal(inlineExecutableScripts.length, 0, "index.html should not contain executable inline scripts");
 const localScriptPaths = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi)]
   .map(match => match[1])
