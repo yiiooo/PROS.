@@ -1,0 +1,12 @@
+/* PROS Select Size — responsive product detail controls. */
+.pros-size-select{margin:14px 0 18px;padding:0 0 16px;border-bottom:1px solid var(--ln,#dedbd4);min-width:0}
+.pros-size-select-heading{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px;font-size:12px;font-weight:800;letter-spacing:.09em;color:var(--tx,#171717)}
+.pros-size-separator{color:var(--mu,#858585)}
+.pros-size-guide-link{border:0;background:transparent;padding:0;color:var(--mu,#858585);font:inherit;font-size:11px;font-weight:700;letter-spacing:.1em;text-decoration:none;cursor:pointer}
+.pros-size-guide-link:focus-visible,.pros-size-option:focus-visible{outline:2px solid var(--olive,#c7ef00);outline-offset:3px}
+.pros-size-options{display:flex;flex-wrap:wrap;gap:9px}
+.pros-size-option{min-width:62px;min-height:52px;padding:10px 14px;border:1px solid var(--ln,#d8d5ce);border-radius:0;background:transparent;color:var(--tx,#171717);font:inherit;font-size:14px;font-weight:750;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.pros-size-option[aria-pressed="true"]{background:var(--tx,#171717);border-color:var(--tx,#171717);color:var(--bg,#fff)}
+.pros-size-selected{margin:8px 0 0;color:var(--mu,#777);font-size:11px;line-height:1.4}
+#product-size-guide{scroll-margin-top:18px}
+@media(max-width:640px){.pros-size-select{margin:12px 0 16px;padding-bottom:14px}.pros-size-options{gap:7px}.pros-size-option{min-width:58px;min-height:48px;padding:9px 11px}}
